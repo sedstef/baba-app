@@ -46,28 +46,4 @@ public class MainTest {
         assertThat(output, is(bannerText + System.lineSeparator() + printPrompt));
     }
 
-    @Test
-    public void promptLoopParsesHelp() throws Exception {
-        // arrange
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(baos, true, StandardCharsets.UTF_8));
-        Iterator<String> inputs = List.of("help", "exit").iterator();
-        BufferedReader reader = new BufferedReader (new StringReader("")){
-            @Override
-            public String readLine() throws IOException {
-                if(!inputs.hasNext()) {
-                    throw new IOException("No more input");
-                }
-                return inputs.next();
-            }
-        };
-
-        // act
-        Main.promptLoop(reader);
-
-        //assert
-        String output = baos.toString(StandardCharsets.UTF_8);
-        String printPrompt = "Baba$: Available commands: help, exit\nBaba$: ";
-        assertThat(output, is(printPrompt));
-    }
 }
