@@ -5,3 +5,12 @@ plugins {
 application {
     mainClass = 'at.fhj.softsec.baba.Main'
 }
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.hamcrest:hamcrest:3.0'
+}

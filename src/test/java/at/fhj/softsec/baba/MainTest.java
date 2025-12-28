@@ -1,0 +1,39 @@
+package at.fhj.softsec.baba;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+public class MainTest {
+    private PrintStream out;
+
+    @Before
+    public void setUp() {
+        out = System.out;
+    }
+
+    @After
+    public void tearDown() {
+        System.setOut(out);
+    }
+
+    @Test
+    public void main() {
+        // arrange
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(baos, true, StandardCharsets.UTF_8));
+
+        // act
+        Main.main(null);
+
+        //assert
+        String output = baos.toString(StandardCharsets.UTF_8);
+        assertThat(output, is("Hello, Baba!" + System.lineSeparator()));
+    }
+}
