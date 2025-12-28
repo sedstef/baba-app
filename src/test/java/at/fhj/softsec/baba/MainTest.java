@@ -39,7 +39,7 @@ public class MainTest {
         String output = baos.toString(StandardCharsets.UTF_8);
         InputStream is = Main.class.getResourceAsStream("/banner.txt");
         String bannerText = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-        String printPrompt = "Baba$: ";
+        String printPrompt = "BaBa> ";
         assertThat(output, is(bannerText + System.lineSeparator() + printPrompt));
     }
 

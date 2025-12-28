@@ -4,28 +4,27 @@ import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ZionTest {
+public class MainPromptTest {
 
     @Test
     public void promptLoopParsesHelp() throws Exception {
         // arrange
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream out = new PrintStream(baos, true, StandardCharsets.UTF_8);
+        PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
 
         BufferedReader reader = CommandReader.of("help", "exit");
-        Zion zion = new Zion(out, reader);
+        Main main = new Main(out, reader);
 
         // act
-        zion.promptLoop();
+        main.promptLoop();
 
         //assert
         String output = baos.toString(StandardCharsets.UTF_8);
-        String printPrompt = "Baba$: Available commands: help, exit\nBaba$: ";
+        String printPrompt = "BaBa> Available commands: help, exit\nBaBa> ";
         assertThat(output, is(printPrompt));
     }
 
@@ -33,17 +32,17 @@ public class ZionTest {
     public void promptLoopParsesRegister() throws Exception {
         // arrange
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream out = new PrintStream(baos, true, StandardCharsets.UTF_8);
+        PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
 
         BufferedReader reader = CommandReader.of("register", "user", "password", "password", "exit");
-        Zion zion = new Zion(out, reader);
+        Main main = new Main(out, reader);
 
         // act
-        zion.promptLoop();
+        main.promptLoop();
 
         //assert
         String output = baos.toString(StandardCharsets.UTF_8);
-        String printPrompt = "Baba$: username: password: verify password: Baba$: ";
+        String printPrompt = "BaBa> Username: Password: Verify password: BaBa> ";
         assertThat(output, is(printPrompt));
     }
 }

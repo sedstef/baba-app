@@ -6,7 +6,10 @@ import java.nio.charset.StandardCharsets;
 public class Main {
     public static void main(String[] args) {
         printBanner();
-        Zion.defaultLoop();
+        new Main(
+                new PrintWriter(System.out, true),
+                new BufferedReader(new InputStreamReader(System.in))
+        ).promptLoop();
     }
 
     private static void printBanner() {
@@ -16,5 +19,46 @@ public class Main {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private final CliContext context;
+    private final CommandRegistry root;
+
+    Main(PrintWriter out, BufferedReader in) {
+        context = new CliContext(in, out);
+
+        root = new CommandRegistry()
+                .register(new Command() {
+                    @Override
+                    public String name() {
+                        return "help";
+                    }
+
+                    @Override
+                    public String description() {
+                        return "Show help information";
+                    }
+
+                    @Override
+                    public void execute(String[] args, CliContext context) throws IOException {
+                        out.println("Available commands: help, exit");
+                    }
+                })
+                .register(new RegisterUserCommand());
+    }
+
+    void promptLoop() {
+        do {
+            try {
+                String line = context.prompt("BaBa> ");
+                if (line == null || line.equals("exit")) break;
+
+                String[] tokens = line.trim().split("\\s+");
+                if (tokens.length == 0) continue;
+                root.execute(tokens, context);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } while (true);
     }
 }
