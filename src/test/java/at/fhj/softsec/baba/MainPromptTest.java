@@ -1,6 +1,7 @@
 package at.fhj.softsec.baba;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -29,8 +30,10 @@ public class MainPromptTest {
     }
 
     @Test
-    public void promptLoopParsesRegister() throws Exception {
+    public void promptLoopParsesRegister(@TempDir File tmpDir) throws Exception {
         // arrange
+        StorageService.getInstance().setStorageDir(new File(tmpDir, "storage"));
+
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
 
