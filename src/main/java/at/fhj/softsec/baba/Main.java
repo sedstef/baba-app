@@ -1,6 +1,5 @@
 package at.fhj.softsec.baba;
 
-import javax.swing.text.html.Option;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
