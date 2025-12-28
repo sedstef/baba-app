@@ -25,7 +25,16 @@ class Zion {
             try {
                 out.print("Baba$: ");
                 String input = reader.readLine();
-                if ("help".equalsIgnoreCase(input.trim())) {
+                if("register".equalsIgnoreCase(input.trim())) {
+                    out.print("username: ");
+                    String username = reader.readLine();
+                    out.print("password: ");
+                    String password = reader.readLine();
+                    out.print("verify password: ");
+                    String verifyPassword = reader.readLine();
+
+                    // Registration logic would go here
+                } else if ("help".equalsIgnoreCase(input.trim())) {
                     out.println("Available commands: help, exit");
                 } else if ("exit".equalsIgnoreCase(input.trim())) {
                     break;
