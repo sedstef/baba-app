@@ -14,6 +14,7 @@ public class StorageService {
     }
 
     private File storageDir;
+    private String currentUsername;
 
     private StorageService() {
         this.storageDir = new File("data");
@@ -37,5 +38,24 @@ public class StorageService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void loginUser(String username, char[] password) {
+        File file = new File(storageDir, String.format("%s.dat", username));
+        if (!file.exists()) {
+            throw new RuntimeException("User or password invalid");
+        }
+        try {
+            byte[] encrypted = Files.readAllBytes(file.toPath());
+            // Try to decrypt to verify password
+            Encryptor.decrypt(encrypted, password);
+            this.currentUsername = username;
+        } catch (Exception e) {
+            throw new RuntimeException("User or password invalid");
+        }
+    }
+
+    public String getCurrentUsername() {
+        return currentUsername;
     }
 }

@@ -3,7 +3,7 @@ package at.fhj.softsec.baba;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class RegisterUserCommand implements Command {
+public class RegisterCommand implements Command {
 
     @Override
     public String name() {

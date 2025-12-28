@@ -1,7 +1,9 @@
 package at.fhj.softsec.baba;
 
+import javax.swing.text.html.Option;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) {
@@ -44,13 +46,17 @@ public class Main {
                         out.println("Available commands: help, exit");
                     }
                 })
-                .register(new RegisterUserCommand());
+                .register(new RegisterCommand())
+                .register(new LoginCommand());
     }
 
     void promptLoop() {
         do {
             try {
-                String line = context.prompt("BaBa> ");
+                String prompt = Optional.ofNullable(StorageService.getInstance().getCurrentUsername())
+                        .map(username -> username + "@BaBa> ")
+                        .orElse("BaBa> ");
+                String line = context.prompt(prompt);
                 if (line == null || line.equals("exit")) break;
 
                 String[] tokens = line.trim().split("\\s+");

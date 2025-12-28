@@ -60,7 +60,7 @@ public class MainPromptTest {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
 
-        BufferedReader reader = CommandReader.of("login", username, new String(password), "exit");
+        BufferedReader reader = CommandReader.of("login "+ username, new String(password), "exit");
         Main main = new Main(out, reader);
 
         // act
@@ -68,7 +68,7 @@ public class MainPromptTest {
 
         //assert
         String output = baos.toString(StandardCharsets.UTF_8);
-        String printPrompt = "BaBa> Login successful user@BaBa> ";
+        String printPrompt = "BaBa> Password: Login successful.\nuser@BaBa> ";
         assertThat(output, is(printPrompt));
     }
 }
