@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
@@ -24,7 +25,7 @@ public class MainTest {
     }
 
     @Test
-    public void main() {
+    public void main() throws Exception{
         // arrange
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         System.setOut(new PrintStream(baos, true, StandardCharsets.UTF_8));
@@ -34,6 +35,8 @@ public class MainTest {
 
         //assert
         String output = baos.toString(StandardCharsets.UTF_8);
-        assertThat(output, is("Hello, Baba!" + System.lineSeparator()));
+        InputStream is = Main.class.getResourceAsStream("/banner.txt");
+        String bannerText = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        assertThat(output, is(bannerText+System.lineSeparator()));
     }
 }
