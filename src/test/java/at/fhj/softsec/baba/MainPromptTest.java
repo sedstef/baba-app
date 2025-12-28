@@ -48,4 +48,27 @@ public class MainPromptTest {
         String printPrompt = "BaBa> Username: Password: Verify password: BaBa> ";
         assertThat(output, is(printPrompt));
     }
+
+    @Test
+    public void promptLoopParsesLogin(@TempDir File tmpDir) throws Exception {
+        // arrange
+        StorageService.getInstance().setStorageDir(new File(tmpDir, "storage"));
+        String username = "user";
+        char[] password = "password".toCharArray();
+        StorageService.getInstance().createUser(username, password);
+
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
+
+        BufferedReader reader = CommandReader.of("login", username, new String(password), "exit");
+        Main main = new Main(out, reader);
+
+        // act
+        main.promptLoop();
+
+        //assert
+        String output = baos.toString(StandardCharsets.UTF_8);
+        String printPrompt = "BaBa> Login successful user@BaBa> ";
+        assertThat(output, is(printPrompt));
+    }
 }
