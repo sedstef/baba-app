@@ -6,6 +6,10 @@ application {
     mainClass = 'at.fhj.softsec.baba.Main'
 }
 
+run {
+    standardInput = System.in
+}
+
 repositories {
     mavenCentral()
 }
