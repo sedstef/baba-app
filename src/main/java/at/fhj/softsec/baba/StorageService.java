@@ -35,6 +35,7 @@ public class StorageService {
         try {
             byte[] encrypted = Encryptor.encrypt("".getBytes(), password);
             Files.write(file.toPath(), encrypted);
+            this.currentUsername = username;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

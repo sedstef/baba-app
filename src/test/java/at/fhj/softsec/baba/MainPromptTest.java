@@ -45,7 +45,7 @@ public class MainPromptTest {
 
         //assert
         String output = baos.toString(StandardCharsets.UTF_8);
-        String printPrompt = "BaBa> Username: Password: Verify password: BaBa> ";
+        String printPrompt = "BaBa> Username: Password: Verify password: user@BaBa> ";
         assertThat(output, is(printPrompt));
     }
 
