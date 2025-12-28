@@ -1,14 +1,11 @@
 package at.fhj.softsec.baba;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-import java.util.List;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -16,13 +13,13 @@ public class MainTest {
     private PrintStream stdout;
     private InputStream stdin;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         stdout = System.out;
         stdin = System.in;
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         System.setOut(stdout);
         System.setIn(stdin);
