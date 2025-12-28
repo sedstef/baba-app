@@ -19,7 +19,6 @@ public class Main {
             try {
                 System.out.print("Baba$: ");
                 String input = new BufferedReader(new InputStreamReader(System.in)).readLine();
-                System.out.printf("You entered: %s%n", input);
                 if("exit".equalsIgnoreCase(input.trim())){
                     break;
                 }
