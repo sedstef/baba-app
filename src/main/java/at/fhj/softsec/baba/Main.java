@@ -8,18 +8,25 @@ import java.nio.charset.StandardCharsets;
 
 public class Main {
     public static void main(String[] args) {
+        printBanner();
+        promptLoop();
+    }
 
-        try {
-            String bannerText = readBannerText();
+    private static void printBanner() {
+        try (InputStream is = Main.class.getResourceAsStream("/banner.txt")) {
+            String bannerText = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             System.out.println(bannerText);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void promptLoop() {
         do {
             try {
                 System.out.print("Baba$: ");
                 String input = new BufferedReader(new InputStreamReader(System.in)).readLine();
-                if("exit".equalsIgnoreCase(input.trim())){
+                if ("exit".equalsIgnoreCase(input.trim())) {
                     break;
                 }
             } catch (IOException e) {
@@ -28,9 +35,4 @@ public class Main {
         } while (true);
     }
 
-    private static String readBannerText() throws IOException{
-        try (InputStream is = Main.class.getResourceAsStream("/banner.txt")) {
-            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
-        }
-    }
 }
