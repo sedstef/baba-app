@@ -47,7 +47,8 @@ public class Main {
                     }
                 })
                 .register(new RegisterCommand())
-                .register(new LoginCommand());
+                .register(new LoginCommand())
+                .register(new LogoutCommand());
     }
 
     void promptLoop() {

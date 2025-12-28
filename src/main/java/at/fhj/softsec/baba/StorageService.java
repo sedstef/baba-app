@@ -59,4 +59,8 @@ public class StorageService {
     public String getCurrentUsername() {
         return currentUsername;
     }
+
+    public void logout() {
+        this.currentUsername = null;
+    }
 }
