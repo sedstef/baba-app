@@ -3,6 +3,7 @@ package at.fhj.softsec.baba;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Objects;
 
 class Zion {
@@ -29,11 +30,17 @@ class Zion {
                     out.print("username: ");
                     String username = reader.readLine();
                     out.print("password: ");
-                    String password = reader.readLine();
+                    char[] password = reader.readLine().toCharArray();
                     out.print("verify password: ");
-                    String verifyPassword = reader.readLine();
+                    char[] verifyPassword = reader.readLine().toCharArray();
 
-                    // Registration logic would go here
+                    try {
+                        new AuthService().register(username, password, verifyPassword);
+                    }finally {
+                        // Clear sensitive data
+                        Arrays.fill(password, '\0');
+                        Arrays.fill(verifyPassword, '\0');
+                    }
                 } else if ("help".equalsIgnoreCase(input.trim())) {
                     out.println("Available commands: help, exit");
                 } else if ("exit".equalsIgnoreCase(input.trim())) {
