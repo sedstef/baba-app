@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 public class Main {
     public static void main(String[] args) {
         printBanner();
-        promptLoop();
+        promptLoop(new BufferedReader(new InputStreamReader(System.in)));
     }
 
     private static void printBanner() {
@@ -21,12 +21,15 @@ public class Main {
         }
     }
 
-    private static void promptLoop() {
+    /* package private cause of tests */
+    /*default*/ static void promptLoop(BufferedReader reader) {
         do {
             try {
                 System.out.print("Baba$: ");
-                String input = new BufferedReader(new InputStreamReader(System.in)).readLine();
-                if ("exit".equalsIgnoreCase(input.trim())) {
+                String input = reader.readLine();
+                if("help".equalsIgnoreCase(input.trim())) {
+                    System.out.println("Available commands: help, exit");
+                }else if ("exit".equalsIgnoreCase(input.trim())) {
                     break;
                 }
             } catch (IOException e) {
