@@ -1,4 +1,4 @@
-package at.fhj.softsec.baba;
+package at.fhj.softsec.baba.service;
 
 import javax.crypto.*;
 import javax.crypto.spec.*;

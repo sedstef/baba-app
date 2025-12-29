@@ -1,6 +1,6 @@
 package at.fhj.softsec.baba.cli;
 
-import at.fhj.softsec.baba.AuthService;
+import at.fhj.softsec.baba.service.AuthService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

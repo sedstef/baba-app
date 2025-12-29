@@ -1,4 +1,4 @@
-package at.fhj.softsec.baba;
+package at.fhj.softsec.baba.service;
 
 import org.junit.jupiter.api.Test;
 
