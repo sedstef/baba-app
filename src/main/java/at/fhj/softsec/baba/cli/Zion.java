@@ -1,10 +1,7 @@
 package at.fhj.softsec.baba.cli;
 
-import at.fhj.softsec.baba.cli.commands.AccountCreateCommand;
+import at.fhj.softsec.baba.cli.commands.*;
 import at.fhj.softsec.baba.service.AuthService;
-import at.fhj.softsec.baba.cli.commands.LoginCommand;
-import at.fhj.softsec.baba.cli.commands.LogoutCommand;
-import at.fhj.softsec.baba.cli.commands.RegisterCommand;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,6 +48,7 @@ public class Zion {
         root.register(new RegisterCommand());
         root.register(new LoginCommand());
         root.register(new LogoutCommand());
+        root.sub("account").register(new AccountListCommand());
         root.sub("account").register(new AccountCreateCommand());
     }
 
