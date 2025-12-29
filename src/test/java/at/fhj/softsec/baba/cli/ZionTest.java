@@ -1,5 +1,7 @@
-package at.fhj.softsec.baba;
+package at.fhj.softsec.baba.cli;
 
+import at.fhj.softsec.baba.AuthService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -9,7 +11,12 @@ import java.nio.charset.StandardCharsets;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class MainPromptTest {
+public class ZionTest {
+
+    @AfterEach
+    public void tearDown() {
+        AuthService.getInstance().logout();
+    }
 
     @Test
     public void promptLoopParsesHelp() throws Exception {
@@ -18,10 +25,10 @@ public class MainPromptTest {
         PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
 
         BufferedReader reader = CommandReader.of("help", "exit");
-        Main main = new Main(out, reader);
+        Zion zion = new Zion(out, reader);
 
         // act
-        main.promptLoop();
+        zion.promptLoop();
 
         //assert
         String output = baos.toString(StandardCharsets.UTF_8);
@@ -38,10 +45,10 @@ public class MainPromptTest {
         PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
 
         BufferedReader reader = CommandReader.of("register", "user", "password", "password", "exit");
-        Main main = new Main(out, reader);
+        Zion zion = new Zion(out, reader);
 
         // act
-        main.promptLoop();
+        zion.promptLoop();
 
         //assert
         String output = baos.toString(StandardCharsets.UTF_8);
@@ -56,15 +63,16 @@ public class MainPromptTest {
         String username = "user";
         char[] password = "password".toCharArray();
         AuthService.getInstance().createUser(username, password);
+        AuthService.getInstance().logout();
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
 
-        BufferedReader reader = CommandReader.of("login "+ username, new String(password), "exit");
-        Main main = new Main(out, reader);
+        BufferedReader reader = CommandReader.of("login " + username, new String(password), "exit");
+        Zion zion = new Zion(out, reader);
 
         // act
-        main.promptLoop();
+        zion.promptLoop();
 
         //assert
         String output = baos.toString(StandardCharsets.UTF_8);
@@ -83,11 +91,11 @@ public class MainPromptTest {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
 
-        BufferedReader reader = CommandReader.of("logout",  "exit");
-        Main main = new Main(out, reader);
+        BufferedReader reader = CommandReader.of("logout", "exit");
+        Zion zion = new Zion(out, reader);
 
         // act
-        main.promptLoop();
+        zion.promptLoop();
 
         //assert
         String output = baos.toString(StandardCharsets.UTF_8);
