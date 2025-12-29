@@ -7,7 +7,10 @@ public interface Command {
 
     String description();
 
-    default void execute(String[] args, CliContext context) throws IOException {
-        // default: do nothing
+    void execute(String[] args, CliContext context) throws IOException;
+
+    interface CommandVisitor{
+
+        void visit(Command command);
     }
 }

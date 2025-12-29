@@ -24,7 +24,7 @@ public class LoginCommand implements Command {
 
         //ctx.out.println("Creating new user (Ctrl+C to cancel)");
 
-        String username = args[1];
+        String username = args[0];
         char[] pw = ctx.promptPassword("Password: ");
 
         try {
