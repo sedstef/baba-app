@@ -32,7 +32,7 @@ public class MainPromptTest {
     @Test
     public void promptLoopParsesRegister(@TempDir File tmpDir) throws Exception {
         // arrange
-        StorageService.getInstance().setStorageDir(new File(tmpDir, "storage"));
+        AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
@@ -52,10 +52,10 @@ public class MainPromptTest {
     @Test
     public void promptLoopParsesLogin(@TempDir File tmpDir) throws Exception {
         // arrange
-        StorageService.getInstance().setStorageDir(new File(tmpDir, "storage"));
+        AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
         String username = "user";
         char[] password = "password".toCharArray();
-        StorageService.getInstance().createUser(username, password);
+        AuthService.getInstance().createUser(username, password);
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
@@ -75,10 +75,10 @@ public class MainPromptTest {
     @Test
     public void promptLoopParsesLogout(@TempDir File tmpDir) throws Exception {
         // arrange
-        StorageService.getInstance().setStorageDir(new File(tmpDir, "storage"));
+        AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
         String username = "user";
         char[] password = "password".toCharArray();
-        StorageService.getInstance().createUser(username, password);
+        AuthService.getInstance().createUser(username, password);
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);

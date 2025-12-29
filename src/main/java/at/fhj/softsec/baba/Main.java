@@ -53,7 +53,7 @@ public class Main {
     void promptLoop() {
         do {
             try {
-                String prompt = Optional.ofNullable(StorageService.getInstance().getCurrentUsername())
+                String prompt = Optional.ofNullable(AuthService.getInstance().getCurrentUsername())
                         .map(username -> username + "@BaBa> ")
                         .orElse("BaBa> ");
                 String line = context.prompt(prompt);

@@ -30,7 +30,7 @@ public class RegisterCommand implements Command {
                 ctx.out.println("Passwords do not match.");
                 return;
             }
-            StorageService.getInstance().createUser(username, pw1);
+            AuthService.getInstance().createUser(username, pw1);
         } finally {
             // IMPORTANT: wipe passwords
             Arrays.fill(pw1, '\0');

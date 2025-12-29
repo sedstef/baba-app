@@ -1,22 +1,21 @@
 package at.fhj.softsec.baba;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Objects;
 
-public class StorageService {
+public class AuthService {
 
-    private final static StorageService instance = new StorageService();
+    private final static AuthService instance = new AuthService();
 
-    public static StorageService getInstance() {
+    public static AuthService getInstance() {
         return instance;
     }
 
     private File storageDir;
     private String currentUsername;
 
-    private StorageService() {
+    private AuthService() {
         this.storageDir = new File("data");
     }
 

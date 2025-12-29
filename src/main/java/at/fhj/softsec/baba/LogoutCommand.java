@@ -1,7 +1,6 @@
 package at.fhj.softsec.baba;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 public class LogoutCommand implements Command {
 
@@ -17,7 +16,7 @@ public class LogoutCommand implements Command {
 
     @Override
     public void execute(String[] args, CliContext ctx) throws IOException {
-        StorageService.getInstance().logout();
+        AuthService.getInstance().logout();
         ctx.out.println("Logout successful.");
     }
 }

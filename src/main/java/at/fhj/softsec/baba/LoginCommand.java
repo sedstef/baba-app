@@ -24,7 +24,7 @@ public class LoginCommand implements Command {
         char[] pw = ctx.promptPassword("Password: ");
 
         try {
-            StorageService.getInstance().loginUser(username, pw);
+            AuthService.getInstance().loginUser(username, pw);
             ctx.out.println("Login successful.");
         } finally {
             // IMPORTANT: wipe passwords
