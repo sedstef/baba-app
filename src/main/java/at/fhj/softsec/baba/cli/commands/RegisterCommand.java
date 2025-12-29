@@ -1,4 +1,8 @@
-package at.fhj.softsec.baba;
+package at.fhj.softsec.baba.cli.commands;
+
+import at.fhj.softsec.baba.AuthService;
+import at.fhj.softsec.baba.cli.CliContext;
+import at.fhj.softsec.baba.cli.Command;
 
 import java.io.IOException;
 import java.util.Arrays;

@@ -1,5 +1,12 @@
 package at.fhj.softsec.baba;
 
+import at.fhj.softsec.baba.cli.CliContext;
+import at.fhj.softsec.baba.cli.Command;
+import at.fhj.softsec.baba.cli.CommandRegistry;
+import at.fhj.softsec.baba.cli.commands.LoginCommand;
+import at.fhj.softsec.baba.cli.commands.LogoutCommand;
+import at.fhj.softsec.baba.cli.commands.RegisterCommand;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;

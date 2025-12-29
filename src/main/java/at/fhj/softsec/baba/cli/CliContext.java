@@ -1,4 +1,4 @@
-package at.fhj.softsec.baba;
+package at.fhj.softsec.baba.cli;
 
 import java.io.*;
 import java.util.Objects;
