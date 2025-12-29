@@ -103,6 +103,24 @@ public class ZionTest {
                                 .withSetup(tmpDir -> {
                                     AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
                                     AuthService.getInstance().createUser("alice", "secret".toCharArray());
+                                }),
+                        ArgumentsBuilder.of("deposit 1 20.00", "exit")
+                                .withExpectedPrompt("alice@BaBa> Account 1 balance € 20,00.\nalice@BaBa> ")
+                                .withSetup(tmpDir -> {
+                                    AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
+                                    AuthService.getInstance().createUser("alice", "secret".toCharArray());
+                                }),
+                        ArgumentsBuilder.of("withdrawal 1 20.00", "exit")
+                                .withExpectedPrompt("alice@BaBa> Account 1 balance € 20,00.\nalice@BaBa> ")
+                                .withSetup(tmpDir -> {
+                                    AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
+                                    AuthService.getInstance().createUser("alice", "secret".toCharArray());
+                                }),
+                        ArgumentsBuilder.of("transfer 1 2 20.00", "exit")
+                                .withExpectedPrompt("alice@BaBa> Account 1 balance € 20,00.\nAccount 2 balance € 20,00.\nalice@BaBa> ")
+                                .withSetup(tmpDir -> {
+                                    AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
+                                    AuthService.getInstance().createUser("alice", "secret".toCharArray());
                                 })
                 )
                 .map(ArgumentsBuilder::build);

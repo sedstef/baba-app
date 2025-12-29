@@ -52,6 +52,9 @@ public class Zion {
         root.sub("account").register(new AccountCreateCommand());
         root.sub("account").register(new AccountShowCommand());
         root.sub("account").register(new AccountDeleteCommand());
+        root.register(new DepositCommand());
+        root.register(new WithdrawalCommand());
+        root.register(new TransferCommand());
     }
 
     public void promptLoop() {
