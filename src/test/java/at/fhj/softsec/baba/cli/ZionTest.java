@@ -8,7 +8,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ZionTest {
@@ -32,8 +32,8 @@ public class ZionTest {
 
         //assert
         String output = baos.toString(StandardCharsets.UTF_8);
-        String printPrompt = "BaBa> Available commands: help, exit\nBaBa> ";
-        assertThat(output, is(printPrompt));
+        assertThat(output, startsWith("BaBa> Available commands:"));
+        assertThat(output, endsWith("\nBaBa> "));
     }
 
     @Test

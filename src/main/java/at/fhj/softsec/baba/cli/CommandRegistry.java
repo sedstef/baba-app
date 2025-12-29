@@ -1,6 +1,8 @@
 package at.fhj.softsec.baba.cli;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +18,10 @@ public class CommandRegistry {
         return this;
     }
 
+    public Collection<Command> getCommands() {
+        return Collections.unmodifiableCollection(commands.values());
+    }
+
     public void execute(String[] tokens, CliContext ctx) throws IOException {
         if (tokens.length == 0) return;
 
@@ -26,4 +32,5 @@ public class CommandRegistry {
             ctx.out.println("Unknown command: " + tokens[0]);
         }
     }
+
 }

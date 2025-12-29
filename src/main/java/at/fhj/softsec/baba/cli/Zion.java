@@ -31,7 +31,10 @@ public class Zion {
 
                     @Override
                     public void execute(String[] args, CliContext context) throws IOException {
-                        out.println("Available commands: help, exit");
+                        context.out.println("Available commands: ");
+                        root.getCommands().forEach(cmd -> {
+                            context.out.printf("%-10s - %s%n", cmd.name(), cmd.description());
+                        });
                     }
                 })
                 .register(new RegisterCommand())
