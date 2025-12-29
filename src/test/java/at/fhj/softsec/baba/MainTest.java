@@ -1,5 +1,6 @@
 package at.fhj.softsec.baba;
 
+import at.fhj.softsec.baba.storage.Storage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,9 +15,10 @@ public class MainTest {
     private InputStream stdin;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception{
         stdout = System.out;
         stdin = System.in;
+        Storage.getInstance().unlock(new char[]{});
     }
 
     @AfterEach

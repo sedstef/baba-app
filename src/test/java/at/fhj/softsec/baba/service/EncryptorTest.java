@@ -1,5 +1,6 @@
 package at.fhj.softsec.baba.service;
 
+import at.fhj.softsec.baba.storage.Encryptor;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;

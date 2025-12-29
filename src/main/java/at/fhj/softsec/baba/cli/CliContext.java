@@ -12,13 +12,17 @@ public class CliContext {
         this.out = Objects.requireNonNull(out, "out must not be null");
     }
 
-    public String prompt(String message) throws IOException {
+    public String prompt(String message) {
         out.print(message);
         out.flush();
-        return in.readLine();
+        try {
+            return in.readLine();
+        } catch (IOException ex) {
+            throw new UncheckedIOException("Failed to read input", ex);
+        }
     }
 
-    public char[] promptPassword(String message) throws IOException {
+    public char[] promptPassword(String message) {
         Console console = System.console();
         if (console != null) {
             return console.readPassword(message);
