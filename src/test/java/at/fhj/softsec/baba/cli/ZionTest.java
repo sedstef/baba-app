@@ -4,9 +4,14 @@ import at.fhj.softsec.baba.service.AuthService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,180 +41,100 @@ public class ZionTest {
         assertThat(output, endsWith("\nBaBa> "));
     }
 
-    @Test
-    public void promptLoopParsesHelpHelp() throws Exception {
+    @ParameterizedTest
+    @MethodSource("provideInputLines")
+    public void promptLoopParsesInput(Consumer<File> setup, CommandReader commandReader, String expectedPrompt, @TempDir File tmpDir) throws Exception {
         // arrange
+        if (setup != null) setup.accept(tmpDir);
+
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
 
-        BufferedReader reader = CommandReader.of("help help", "exit");
-        Zion zion = new Zion(out, reader);
+        Zion zion = new Zion(out, commandReader);
 
         // act
         zion.promptLoop();
 
         //assert
         String output = baos.toString(StandardCharsets.UTF_8);
-        String printPrompt = "BaBa> help - Show help information\nBaBa> ";
-        assertThat(output, is(printPrompt));
+        assertThat(output, is(expectedPrompt));
     }
 
-    @Test
-    public void promptLoopParsesRegister(@TempDir File tmpDir) throws Exception {
-        // arrange
-        AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
-
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
-
-        BufferedReader reader = CommandReader.of("register", "user", "password", "password", "exit");
-        Zion zion = new Zion(out, reader);
-
-        // act
-        zion.promptLoop();
-
-        //assert
-        String output = baos.toString(StandardCharsets.UTF_8);
-        String printPrompt = "BaBa> Username: Password: Verify password: user@BaBa> ";
-        assertThat(output, is(printPrompt));
+    private static Stream<Arguments> provideInputLines() {
+        return Stream.of(
+                        ArgumentsBuilder.of("help help", "exit")
+                                .withExpectedPrompt("BaBa> help - Show help information\nBaBa> "),
+                        ArgumentsBuilder.of("register", "alice", "secret", "secret", "exit")
+                                .withExpectedPrompt("BaBa> Username: Password: Verify password: alice@BaBa> ")
+                                .withSetup(tmpDir -> AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"))),
+                        ArgumentsBuilder.of("login alice", "secret", "exit")
+                                .withExpectedPrompt("BaBa> Password: Login successful.\nalice@BaBa> ")
+                                .withSetup(tmpDir -> {
+                                    AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
+                                    AuthService.getInstance().createUser("alice", "secret".toCharArray());
+                                    AuthService.getInstance().logout();
+                                }),
+                        ArgumentsBuilder.of("logout", "exit")
+                                .withExpectedPrompt("alice@BaBa> Logout successful.\nBaBa> ")
+                                .withSetup(tmpDir -> {
+                                    AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
+                                    AuthService.getInstance().createUser("alice", "secret".toCharArray());
+                                }),
+                        ArgumentsBuilder.of("account list", "exit")
+                                .withExpectedPrompt("alice@BaBa> Account listing:\nalice@BaBa> ")
+                                .withSetup(tmpDir -> {
+                                    AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
+                                    AuthService.getInstance().createUser("alice", "secret".toCharArray());
+                                }),
+                        ArgumentsBuilder.of("account create", "exit")
+                                .withExpectedPrompt("alice@BaBa> Account 1 created.\nalice@BaBa> ")
+                                .withSetup(tmpDir -> {
+                                    AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
+                                    AuthService.getInstance().createUser("alice", "secret".toCharArray());
+                                }),
+                        ArgumentsBuilder.of("account show 1", "exit")
+                                .withExpectedPrompt("alice@BaBa> Account 1 balance 0.\nalice@BaBa> ")
+                                .withSetup(tmpDir -> {
+                                    AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
+                                    AuthService.getInstance().createUser("alice", "secret".toCharArray());
+                                }),
+                        ArgumentsBuilder.of("account delete 1", "exit")
+                                .withExpectedPrompt("alice@BaBa> Account 1 deleted.\nalice@BaBa> ")
+                                .withSetup(tmpDir -> {
+                                    AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
+                                    AuthService.getInstance().createUser("alice", "secret".toCharArray());
+                                })
+                )
+                .map(ArgumentsBuilder::build);
     }
 
-    @Test
-    public void promptLoopParsesLogin(@TempDir File tmpDir) throws Exception {
-        // arrange
-        AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
-        String username = "user";
-        char[] password = "password".toCharArray();
-        AuthService.getInstance().createUser(username, password);
-        AuthService.getInstance().logout();
+    private static class ArgumentsBuilder {
+        public static ArgumentsBuilder of(String command, String... commands) {
+            return new ArgumentsBuilder().withCommands(command, commands);
+        }
 
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
+        private Consumer<File> setup;
+        private CommandReader commandReader;
+        private String expectedPrompt;
 
-        BufferedReader reader = CommandReader.of("login " + username, new String(password), "exit");
-        Zion zion = new Zion(out, reader);
+        public ArgumentsBuilder withCommands(String command, String... commands) {
+            this.commandReader = CommandReader.of(command, commands);
+            return this;
+        }
 
-        // act
-        zion.promptLoop();
+        public ArgumentsBuilder withSetup(Consumer<File> setup) {
+            this.setup = setup;
+            return this;
+        }
 
-        //assert
-        String output = baos.toString(StandardCharsets.UTF_8);
-        String printPrompt = "BaBa> Password: Login successful.\nuser@BaBa> ";
-        assertThat(output, is(printPrompt));
+        public ArgumentsBuilder withExpectedPrompt(String expectedPrompt) {
+            this.expectedPrompt = expectedPrompt;
+            return this;
+        }
+
+        public Arguments build() {
+            return Arguments.of(setup, commandReader, expectedPrompt);
+        }
     }
 
-    @Test
-    public void promptLoopParsesLogout(@TempDir File tmpDir) throws Exception {
-        // arrange
-        AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
-        String username = "user";
-        char[] password = "password".toCharArray();
-        AuthService.getInstance().createUser(username, password);
-
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
-
-        BufferedReader reader = CommandReader.of("logout", "exit");
-        Zion zion = new Zion(out, reader);
-
-        // act
-        zion.promptLoop();
-
-        //assert
-        String output = baos.toString(StandardCharsets.UTF_8);
-        String printPrompt = "user@BaBa> Logout successful.\nBaBa> ";
-        assertThat(output, is(printPrompt));
-    }
-
-    @Test
-    public void promptLoopParsesAccountList(@TempDir File tmpDir) throws Exception {
-        // arrange
-        AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
-        String username = "user";
-        char[] password = "password".toCharArray();
-        AuthService.getInstance().createUser(username, password);
-
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
-
-        BufferedReader reader = CommandReader.of("account list", "exit");
-        Zion zion = new Zion(out, reader);
-
-        // act
-        zion.promptLoop();
-
-        //assert
-        String output = baos.toString(StandardCharsets.UTF_8);
-        String printPrompt = "user@BaBa> Account listing:\nuser@BaBa> ";
-        assertThat(output, is(printPrompt));
-    }
-
-    @Test
-    public void promptLoopParsesAccountCreate(@TempDir File tmpDir) throws Exception {
-        // arrange
-        AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
-        String username = "user";
-        char[] password = "password".toCharArray();
-        AuthService.getInstance().createUser(username, password);
-
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
-
-        BufferedReader reader = CommandReader.of("account create", "exit");
-        Zion zion = new Zion(out, reader);
-
-        // act
-        zion.promptLoop();
-
-        //assert
-        String output = baos.toString(StandardCharsets.UTF_8);
-        String printPrompt = "user@BaBa> Account 1 created.\nuser@BaBa> ";
-        assertThat(output, is(printPrompt));
-    }
-
-    @Test
-    public void promptLoopParsesAccountShow(@TempDir File tmpDir) throws Exception {
-        // arrange
-        AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
-        String username = "user";
-        char[] password = "password".toCharArray();
-        AuthService.getInstance().createUser(username, password);
-
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
-
-        BufferedReader reader = CommandReader.of("account show 1", "exit");
-        Zion zion = new Zion(out, reader);
-
-        // act
-        zion.promptLoop();
-
-        //assert
-        String output = baos.toString(StandardCharsets.UTF_8);
-        String printPrompt = "user@BaBa> Account 1 balance 0.\nuser@BaBa> ";
-        assertThat(output, is(printPrompt));
-    }
-
-    @Test
-    public void promptLoopParsesAccountDelete(@TempDir File tmpDir) throws Exception {
-        // arrange
-        AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
-        String username = "user";
-        char[] password = "password".toCharArray();
-        AuthService.getInstance().createUser(username, password);
-
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
-
-        BufferedReader reader = CommandReader.of("account delete 1", "exit");
-        Zion zion = new Zion(out, reader);
-
-        // act
-        zion.promptLoop();
-
-        //assert
-        String output = baos.toString(StandardCharsets.UTF_8);
-        String printPrompt = "user@BaBa> Account 1 deleted.\nuser@BaBa> ";
-        assertThat(output, is(printPrompt));
-    }
 }
