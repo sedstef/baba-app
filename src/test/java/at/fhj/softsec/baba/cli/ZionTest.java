@@ -37,6 +37,24 @@ public class ZionTest {
     }
 
     @Test
+    public void promptLoopParsesHelpHelp() throws Exception {
+        // arrange
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
+
+        BufferedReader reader = CommandReader.of("help help", "exit");
+        Zion zion = new Zion(out, reader);
+
+        // act
+        zion.promptLoop();
+
+        //assert
+        String output = baos.toString(StandardCharsets.UTF_8);
+        String printPrompt = "BaBa> help - Show help information\nBaBa> ";
+        assertThat(output, is(printPrompt));
+    }
+
+    @Test
     public void promptLoopParsesRegister(@TempDir File tmpDir) throws Exception {
         // arrange
         AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));

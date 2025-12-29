@@ -31,10 +31,23 @@ public class Zion {
 
                     @Override
                     public void execute(String[] args, CliContext context) throws IOException {
-                        context.out.println("Available commands: ");
-                        root.getCommands().forEach(cmd -> {
-                            context.out.printf("%-10s - %s%n", cmd.name(), cmd.description());
-                        });
+                        if(args.length > 1) {
+                            String cmdName = args[1];
+                            Optional<Command> cmdOpt = root.getCommands().stream()
+                                    .filter(cmd -> cmd.name().equals(cmdName))
+                                    .findFirst();
+                            if (cmdOpt.isPresent()) {
+                                Command cmd = cmdOpt.get();
+                                context.out.printf("%s - %s%n", cmd.name(), cmd.description());
+                            } else {
+                                context.out.println("Unknown command: " + cmdName);
+                            }
+                        }else {
+                            context.out.println("Available commands: ");
+                            root.getCommands().forEach(cmd -> {
+                                context.out.printf("%-10s - %s%n", cmd.name(), cmd.description());
+                            });
+                        }
                     }
                 })
                 .register(new RegisterCommand())
