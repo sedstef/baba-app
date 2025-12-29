@@ -189,4 +189,27 @@ public class ZionTest {
         String printPrompt = "user@BaBa> Account 1 balance 0.\nuser@BaBa> ";
         assertThat(output, is(printPrompt));
     }
+
+    @Test
+    public void promptLoopParsesAccountDelete(@TempDir File tmpDir) throws Exception {
+        // arrange
+        AuthService.getInstance().setStorageDir(new File(tmpDir, "storage"));
+        String username = "user";
+        char[] password = "password".toCharArray();
+        AuthService.getInstance().createUser(username, password);
+
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
+
+        BufferedReader reader = CommandReader.of("account delete 1", "exit");
+        Zion zion = new Zion(out, reader);
+
+        // act
+        zion.promptLoop();
+
+        //assert
+        String output = baos.toString(StandardCharsets.UTF_8);
+        String printPrompt = "user@BaBa> Account 1 deleted.\nuser@BaBa> ";
+        assertThat(output, is(printPrompt));
+    }
 }

@@ -51,6 +51,7 @@ public class Zion {
         root.sub("account").register(new AccountListCommand());
         root.sub("account").register(new AccountCreateCommand());
         root.sub("account").register(new AccountShowCommand());
+        root.sub("account").register(new AccountDeleteCommand());
     }
 
     public void promptLoop() {
