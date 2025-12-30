@@ -100,8 +100,11 @@ public class ZionTest {
                                 .withExpectedPrompt("alice@BaBa> Logout successful.\nBaBa> ")
                                 .withSetup(app -> login(app, "alice", "secret")),
                         ArgumentsBuilder.of("account list", "exit")
-                                .withExpectedPrompt("alice@BaBa> Account listing:\nalice@BaBa> ")
-                                .withSetup(app -> login(app, "alice", "secret")),
+                                .withExpectedPrompt("alice@BaBa> Account listing:\n1\nalice@BaBa> ")
+                                .withSetup(app -> {
+                                    AuthenticatedUser user = login(app, "alice", "secret");
+                                    app.accounts().create(user);
+                                }),
                         ArgumentsBuilder.of("account create", "exit")
                                 .withExpectedPrompt("alice@BaBa> Account 1 created.\nalice@BaBa> ")
                                 .withSetup(app -> login(app, "alice", "secret")),
@@ -124,10 +127,11 @@ public class ZionTest {
                 .map(ArgumentsBuilder::build);
     }
 
-    private static void login(Application app, String userId, String password) {
+    private static AuthenticatedUser login(Application app, String userId, String password) {
         app.auth().register(userId, password.toCharArray());
         AuthenticatedUser authenticatedUser = app.auth().login(userId, password.toCharArray());
         app.session().login(authenticatedUser);
+        return authenticatedUser;
     }
 
     private static class ArgumentsBuilder {

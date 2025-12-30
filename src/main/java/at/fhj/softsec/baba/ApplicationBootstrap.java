@@ -19,7 +19,10 @@ public class ApplicationBootstrap {
         Storage storage = new Storage(dataDir, secretKey);
 
         final AuthService authService = new AuthService(new UserFileRepository(storage));
-        final AccountsService accountsService = new AccountsService(new AccountFileRepository(storage));
+        final AccountsService accountsService = new AccountsService(
+                new AccountFileRepository(storage),
+                new UserFileRepository(storage)
+        );
         return new Application() {
 
             @Override

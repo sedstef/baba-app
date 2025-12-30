@@ -1,12 +1,16 @@
 package at.fhj.softsec.baba.persistence;
 
 import at.fhj.softsec.baba.domain.model.Account;
+import at.fhj.softsec.baba.domain.model.User;
 import at.fhj.softsec.baba.domain.repository.AccountRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
@@ -20,20 +24,20 @@ public class AccountFileRepository implements AccountRepository {
     }
 
     @Override
+    public Collection<Account> retrieveAll(User user) {
+        Path accountsDir = storage.accountsDir(user.userId());
+        return Files.exists(accountsDir)
+                ? retrieveAccounts(accountsDir).toList()
+                : Collections.emptyList();
+    }
+
+    @Override
     public Long getNextAccountNumber() {
         try {
-            Long lastAccountId = Files.find(storage.userDir(), Integer.MAX_VALUE,
-                            (path, basicFileAttributes) -> Files.isDirectory(path) && path.getFileName().equals("accounts")
-                    ).flatMap(accountsDir -> {
-                        try {
-                            return Files.list(accountsDir)
-                                    .filter(Files::isRegularFile)
-                                    .filter(path -> path.getFileName().toString().endsWith(".enc"));
-                        } catch (Exception e) {
-                            return Stream.empty();
-                        }
-                    })
-                    .map(accountFile -> storage.load(accountFile, Account.class))
+            Long lastAccountId = Files.list(storage.userDir())
+                    .map(userDir -> userDir.resolve("accounts"))
+                    .filter(accountsDir -> Files.exists(accountsDir))
+                    .flatMap(this::retrieveAccounts)
                     .map(Account::number)
                     .sorted(Comparator.naturalOrder())
                     .findFirst()
@@ -45,12 +49,26 @@ public class AccountFileRepository implements AccountRepository {
     }
 
     @Override
-    public void save(Account account) {
+    public Account save(long accountNumber, User user) {
+        Account account = new Account(accountNumber, user.userId());
         storage.save(accountFile(account.userId(), account.number()), account);
+        return account;
     }
 
     private Path accountFile(String userId, Long accountNumber) {
         return storage.accountsDir(userId).resolve(format("%s.enc", accountNumber));
     }
+
+    private Stream<Account> retrieveAccounts(Path accountsDir) {
+        try {
+            return Files.list(accountsDir)
+                    .filter(Files::isRegularFile)
+                    .filter(path -> path.getFileName().toString().endsWith(".enc"))
+                    .map(accountFile -> storage.load(accountFile, Account.class));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }
