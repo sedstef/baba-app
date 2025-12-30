@@ -115,8 +115,8 @@ public class ZionTest {
                                 .withSetup(app -> createAccount(app, "alice", "secret"))
                                 .withExpectedPrompt("alice@BaBa> Account 1 balance € 20,00.\nalice@BaBa> "),
                         ArgumentsBuilder.of("withdrawal 1 20.00", "exit")
-                                .withExpectedPrompt("alice@BaBa> Account 1 balance € 20,00.\nalice@BaBa> ")
-                                .withSetup(app -> login(app, "alice", "secret")),
+                                .withSetup(app -> createAccount(app, "alice", "secret"))
+                                .withExpectedPrompt("alice@BaBa> Account 1 balance € -20,00.\nalice@BaBa> "),
                         ArgumentsBuilder.of("transfer 1 2 20.00", "exit")
                                 .withSetup(app -> login(app, "alice", "secret"))
                                 .withExpectedPrompt("alice@BaBa> Account 1 balance € 20,00.\nAccount 2 balance € 20,00.\nalice@BaBa> ")

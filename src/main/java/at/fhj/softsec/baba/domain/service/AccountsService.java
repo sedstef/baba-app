@@ -43,6 +43,14 @@ public class AccountsService {
     }
 
     public Account deposit(AuthenticatedUser authenticatedUser, Long accountNumber, BigDecimal amount) {
+        return makeMovement(authenticatedUser, accountNumber, amount);
+    }
+
+    public Account withdrawal(AuthenticatedUser authenticatedUser, Long accountNumber, BigDecimal amount) {
+        return makeMovement(authenticatedUser, accountNumber, amount.negate());
+    }
+
+    private Account makeMovement(AuthenticatedUser authenticatedUser, Long accountNumber, BigDecimal amount) {
         User user = userRepository.findById(authenticatedUser.getUserId())
                 .orElseThrow();
 
