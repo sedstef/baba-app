@@ -1,6 +1,6 @@
 package at.fhj.softsec.baba.service;
 
-import at.fhj.softsec.baba.security.PasswordHasher;
+import at.fhj.softsec.baba.security.CryptoUtils;
 import at.fhj.softsec.baba.storage.model.User;
 import at.fhj.softsec.baba.storage.UserRepository;
 
@@ -23,7 +23,7 @@ public class AuthService {
             throw new AuthenticationException("User already exists");
         }
 
-        String passwordHash = PasswordHasher.hash(password);
+        String passwordHash = CryptoUtils.hash(password);
 
         User user = new User(userId, passwordHash);
         userRepository.save(user);
@@ -38,15 +38,13 @@ public class AuthService {
                         new AuthenticationException("Invalid credentials")
                 );
 
-        boolean valid = PasswordHasher.verify(
+        boolean valid = CryptoUtils.verifyHash(
                 password,
                 user.passwordHash()
         );
-
         if (!valid) {
             throw new AuthenticationException("Invalid credentials");
         }
-
         return new AuthenticatedUser(user.userId());
     }
 

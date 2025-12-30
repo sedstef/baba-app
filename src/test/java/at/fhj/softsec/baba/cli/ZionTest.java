@@ -3,7 +3,7 @@ package at.fhj.softsec.baba.cli;
 import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.ApplicationBootstrap;
 import at.fhj.softsec.baba.service.AuthenticatedUser;
-import at.fhj.softsec.baba.security.MasterKeyLoader;
+import at.fhj.softsec.baba.security.CryptoUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ public class ZionTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        SecretKey secretKey = MasterKeyLoader.load(tmpDir, "defaultmaster".toCharArray());
+        SecretKey secretKey = CryptoUtils.loadMasterKey(tmpDir, "defaultmaster".toCharArray());
         app = ApplicationBootstrap.create(tmpDir, secretKey);
     }
 

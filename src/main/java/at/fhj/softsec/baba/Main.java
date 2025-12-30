@@ -2,7 +2,7 @@ package at.fhj.softsec.baba;
 
 import at.fhj.softsec.baba.cli.CliContext;
 import at.fhj.softsec.baba.cli.Zion;
-import at.fhj.softsec.baba.security.MasterKeyLoader;
+import at.fhj.softsec.baba.security.CryptoUtils;
 
 import javax.crypto.SecretKey;
 import java.io.*;
@@ -31,7 +31,7 @@ public class Main {
         while (true) {
             char[] masterPassword = cliContext.promptPassword("Enter master password to unlock BaBa:");
             try {
-                return MasterKeyLoader.load(DATA_DIR, masterPassword);
+                return CryptoUtils.loadMasterKey(DATA_DIR, masterPassword);
             } catch (GeneralSecurityException e) {
                 cliContext.out.println("Invalid master password, try again.");
             } finally {

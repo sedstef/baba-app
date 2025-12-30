@@ -1,7 +1,6 @@
 package at.fhj.softsec.baba.service;
 
-import at.fhj.softsec.baba.security.Encryptor;
-import at.fhj.softsec.baba.security.MasterKeyLoader;
+import at.fhj.softsec.baba.security.CryptoUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -18,11 +17,11 @@ public class EncryptorTest {
     public void testDecryption(@TempDir Path tmpDir) throws Exception {
         //arrange
         byte[] plaintext = "This is a placeholder test.".getBytes(StandardCharsets.UTF_8);
-        SecretKey secretKey = MasterKeyLoader.load(tmpDir, "password".toCharArray());
+        SecretKey secretKey = CryptoUtils.loadMasterKey(tmpDir, "password".toCharArray());
 
         //act
-        byte[] encrypted = Encryptor.encrypt(plaintext, secretKey);
-        byte[] result = Encryptor.decrypt(encrypted, secretKey);
+        byte[] encrypted = CryptoUtils.encrypt(plaintext, secretKey);
+        byte[] result = CryptoUtils.decrypt(encrypted, secretKey);
 
         //assert
         assertThat(new String(result, StandardCharsets.UTF_8), is("This is a placeholder test."));

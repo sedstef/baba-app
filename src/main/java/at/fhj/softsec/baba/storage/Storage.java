@@ -1,6 +1,6 @@
 package at.fhj.softsec.baba.storage;
 
-import at.fhj.softsec.baba.security.Encryptor;
+import at.fhj.softsec.baba.security.CryptoUtils;
 import at.fhj.softsec.baba.storage.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -22,7 +22,7 @@ public class Storage {
 
     public <T> T load(Path path, Class<T> type) {
         try {
-            byte[] bytes = Encryptor.decrypt(Files.readAllBytes(path), secretKey);
+            byte[] bytes = CryptoUtils.decrypt(Files.readAllBytes(path), secretKey);
             return new ObjectMapper().readValue(bytes, type);
         } catch (GeneralSecurityException | IOException e) {
             throw new RuntimeException(e);
@@ -33,7 +33,7 @@ public class Storage {
         try {
             Files.createDirectories(path.getParent());
             byte[] bytes = new ObjectMapper().writeValueAsBytes(user);
-            Files.write(path, Encryptor.encrypt(bytes, secretKey));
+            Files.write(path, CryptoUtils.encrypt(bytes, secretKey));
         } catch (GeneralSecurityException | IOException e) {
             throw new RuntimeException(e);
         }
