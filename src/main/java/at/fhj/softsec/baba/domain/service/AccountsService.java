@@ -23,7 +23,7 @@ public class AccountsService {
         return repository.save(accountNumber, user);
     }
 
-    public Collection<Account> retrieveAcounts(AuthenticatedUser authenticatedUser) {
+    public Collection<Account> retrieveAccounts(AuthenticatedUser authenticatedUser) {
         User user = userRepository.findById(authenticatedUser.getUserId())
                 .orElseThrow();
         return repository.retrieveAll(user);
