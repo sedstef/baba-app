@@ -12,7 +12,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
@@ -49,7 +48,7 @@ public class AccountFileRepository implements AccountRepository {
                     .map(userDir -> userDir.resolve("accounts"))
                     .filter(accountsDir -> Files.exists(accountsDir))
                     .flatMap(this::retrieveAccounts)
-                    .map(Account::number)
+                    .map(Account::getNumber)
                     .sorted(Comparator.naturalOrder())
                     .findFirst()
                     .orElse(0L);
@@ -60,20 +59,19 @@ public class AccountFileRepository implements AccountRepository {
     }
 
     @Override
-    public Account save(long accountNumber, User user) {
-        Account account = new Account(accountNumber, user.userId());
-        storage.save(accountFile(account.userId(), account.number()), account);
+    public Account save(Account account) {
+        storage.save(accountFile(account.getUserId(), account.getNumber()), account);
         return account;
     }
 
     @Override
     public void delete(User user, Long accountNumber) {
         Account account = retrieveByNumber(user, accountNumber);
-        if(BigDecimal.ZERO.compareTo(account.balance()) != 0){
+        if (BigDecimal.ZERO.compareTo(account.getBalance()) != 0) {
             throw new IllegalStateException("Cannot delete a unbalanced account");
         }
         try {
-            Files.delete(accountFile(user.userId(),accountNumber));
+            Files.delete(accountFile(user.userId(), accountNumber));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

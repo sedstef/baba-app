@@ -23,6 +23,6 @@ public class AccountCreateCommand extends AuthenticatedCommand {
     protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) throws IOException {
         Account account = app.accounts().create(user);
 
-        context.out.printf("Account %s created.\n", account.number());
+        context.out.printf("Account %s created.\n", account.getNumber());
     }
 }

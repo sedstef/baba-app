@@ -100,28 +100,19 @@ public class ZionTest {
                                 .withSetup(app -> login(app, "alice", "secret"))
                                 .withExpectedPrompt("alice@BaBa> Logout successful.\nBaBa> "),
                         ArgumentsBuilder.of("account list", "exit")
-                                .withSetup(app -> {
-                                    AuthenticatedUser user = login(app, "alice", "secret");
-                                    app.accounts().create(user);
-                                })
+                                .withSetup(app -> createAccount(app, "alice", "secret"))
                                 .withExpectedPrompt("alice@BaBa> Account listing:\n1 balance € 0,00\nalice@BaBa> "),
                         ArgumentsBuilder.of("account create", "exit")
                                 .withSetup(app -> login(app, "alice", "secret"))
                                 .withExpectedPrompt("alice@BaBa> Account 1 created.\nalice@BaBa> "),
                         ArgumentsBuilder.of("account show 1", "exit")
-                                .withSetup(app -> {
-                                    AuthenticatedUser user = login(app, "alice", "secret");
-                                    app.accounts().create(user);
-                                })
+                                .withSetup(app -> createAccount(app, "alice", "secret"))
                                 .withExpectedPrompt("alice@BaBa> Account 1 balance € 0,00\nalice@BaBa> "),
                         ArgumentsBuilder.of("account delete 1", "exit")
-                                .withSetup(app -> {
-                                    AuthenticatedUser user = login(app, "alice", "secret");
-                                    app.accounts().create(user);
-                                })
+                                .withSetup(app -> createAccount(app, "alice", "secret"))
                                 .withExpectedPrompt("alice@BaBa> Account 1 deleted.\nalice@BaBa> "),
                         ArgumentsBuilder.of("deposit 1 20.00", "exit")
-                                .withSetup(app -> login(app, "alice", "secret"))
+                                .withSetup(app -> createAccount(app, "alice", "secret"))
                                 .withExpectedPrompt("alice@BaBa> Account 1 balance € 20,00.\nalice@BaBa> "),
                         ArgumentsBuilder.of("withdrawal 1 20.00", "exit")
                                 .withExpectedPrompt("alice@BaBa> Account 1 balance € 20,00.\nalice@BaBa> ")
@@ -131,6 +122,11 @@ public class ZionTest {
                                 .withExpectedPrompt("alice@BaBa> Account 1 balance € 20,00.\nAccount 2 balance € 20,00.\nalice@BaBa> ")
                 )
                 .map(ArgumentsBuilder::build);
+    }
+
+    private static void createAccount(Application app, String userId, String password) {
+        AuthenticatedUser user = login(app, userId, password);
+        app.accounts().create(user);
     }
 
     private static AuthenticatedUser login(Application app, String userId, String password) {

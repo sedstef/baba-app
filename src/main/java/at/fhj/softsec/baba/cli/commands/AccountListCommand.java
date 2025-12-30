@@ -25,7 +25,7 @@ public class AccountListCommand extends AuthenticatedCommand {
 
         context.out.println("Account listing:");
         app.accounts().retrieveAccounts(user).stream()
-                .map(account -> format("%s balance € %,.2f", account.number(), account.balance()))
+                .map(account -> format("%s balance € %,.2f", account.getNumber(), account.getBalance()))
                 .forEach(context.out::println);
     }
 }

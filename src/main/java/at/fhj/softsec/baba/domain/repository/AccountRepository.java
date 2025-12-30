@@ -13,7 +13,7 @@ public interface AccountRepository {
 
     Long getNextAccountNumber();
 
-    Account save(long accountNumber, User user);
+    Account save(Account account);
 
     void delete(User user, Long accountNumber);
 }

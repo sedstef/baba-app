@@ -5,6 +5,7 @@ import at.fhj.softsec.baba.domain.repository.AccountRepository;
 import at.fhj.softsec.baba.domain.model.Account;
 import at.fhj.softsec.baba.domain.repository.UserRepository;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 
 public class AccountsService {
@@ -20,7 +21,7 @@ public class AccountsService {
         Long accountNumber = repository.getNextAccountNumber();
         User user = userRepository.findById(authenticatedUser.getUserId())
                 .orElseThrow();
-        return repository.save(accountNumber, user);
+        return repository.save(new Account(accountNumber, user.userId()));
     }
 
     public Collection<Account> retrieveAccounts(AuthenticatedUser authenticatedUser) {
@@ -32,12 +33,21 @@ public class AccountsService {
     public Account retrieveAccount(AuthenticatedUser authenticatedUser, Long accountNumber) {
         User user = userRepository.findById(authenticatedUser.getUserId())
                 .orElseThrow();
-        return repository.retrieveByNumber(user,accountNumber);
+        return repository.retrieveByNumber(user, accountNumber);
     }
 
     public void deleteAccount(AuthenticatedUser authenticatedUser, Long accountNumber) {
         User user = userRepository.findById(authenticatedUser.getUserId())
                 .orElseThrow();
-        repository.delete(user,accountNumber);
+        repository.delete(user, accountNumber);
+    }
+
+    public Account deposit(AuthenticatedUser authenticatedUser, Long accountNumber, BigDecimal amount) {
+        User user = userRepository.findById(authenticatedUser.getUserId())
+                .orElseThrow();
+
+        Account account = repository.retrieveByNumber(user, accountNumber);
+        account.addMovement(amount);
+        return repository.save(account);
     }
 }

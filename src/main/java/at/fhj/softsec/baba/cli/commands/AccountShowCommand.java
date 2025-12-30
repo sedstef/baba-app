@@ -24,6 +24,6 @@ public class AccountShowCommand extends AuthenticatedCommand {
         Long accountNumber = Long.valueOf(args[0]);
 
         Account account = app.accounts().retrieveAccount(user, accountNumber);
-        context.out.printf("Account %d balance € %,.2f\n" , account.number(), account.balance());
+        context.out.printf("Account %d balance € %,.2f\n" , account.getNumber(), account.getBalance());
     }
 }
