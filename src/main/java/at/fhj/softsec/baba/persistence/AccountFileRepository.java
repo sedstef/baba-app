@@ -32,6 +32,15 @@ public class AccountFileRepository implements AccountRepository {
     }
 
     @Override
+    public Account retrieveByNumber(User user, Long accountNumber) {
+        Path accountFile = accountFile(user.userId(), accountNumber);
+        if (Files.notExists(accountFile)) {
+            throw new IllegalArgumentException(format("Account %s doesn't exist", accountNumber));
+        }
+        return storage.load(accountFile, Account.class);
+    }
+
+    @Override
     public Long getNextAccountNumber() {
         try {
             Long lastAccountId = Files.list(storage.userDir())

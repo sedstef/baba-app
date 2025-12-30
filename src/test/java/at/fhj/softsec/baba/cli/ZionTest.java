@@ -100,7 +100,7 @@ public class ZionTest {
                                 .withExpectedPrompt("alice@BaBa> Logout successful.\nBaBa> ")
                                 .withSetup(app -> login(app, "alice", "secret")),
                         ArgumentsBuilder.of("account list", "exit")
-                                .withExpectedPrompt("alice@BaBa> Account listing:\n1\nalice@BaBa> ")
+                                .withExpectedPrompt("alice@BaBa> Account listing:\n1 balance € 0,00\nalice@BaBa> ")
                                 .withSetup(app -> {
                                     AuthenticatedUser user = login(app, "alice", "secret");
                                     app.accounts().create(user);
@@ -109,8 +109,11 @@ public class ZionTest {
                                 .withExpectedPrompt("alice@BaBa> Account 1 created.\nalice@BaBa> ")
                                 .withSetup(app -> login(app, "alice", "secret")),
                         ArgumentsBuilder.of("account show 1", "exit")
-                                .withExpectedPrompt("alice@BaBa> Account 1 balance 0.\nalice@BaBa> ")
-                                .withSetup(app -> login(app, "alice", "secret")),
+                                .withExpectedPrompt("alice@BaBa> Account 1 balance € 0,00\nalice@BaBa> ")
+                                .withSetup(app -> {
+                                    AuthenticatedUser user = login(app, "alice", "secret");
+                                    app.accounts().create(user);
+                                }),
                         ArgumentsBuilder.of("account delete 1", "exit")
                                 .withExpectedPrompt("alice@BaBa> Account 1 deleted.\nalice@BaBa> ")
                                 .withSetup(app -> login(app, "alice", "secret")),

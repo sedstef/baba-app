@@ -28,4 +28,10 @@ public class AccountsService {
                 .orElseThrow();
         return repository.retrieveAll(user);
     }
+
+    public Account retrieveAccount(AuthenticatedUser authenticatedUser, Long accountNumber) {
+        User user = userRepository.findById(authenticatedUser.getUserId())
+                .orElseThrow();
+        return repository.retrieveByNumber(user,accountNumber);
+    }
 }

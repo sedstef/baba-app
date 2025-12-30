@@ -7,9 +7,12 @@ import java.util.Collection;
 
 public interface AccountRepository {
 
+    Collection<Account> retrieveAll(User user);
+
+    Account retrieveByNumber(User user, Long accountNumber);
+
     Long getNextAccountNumber();
 
     Account save(long accountNumber, User user);
 
-    Collection<Account> retrieveAll(User user);
 }
