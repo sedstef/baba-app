@@ -115,7 +115,10 @@ public class ZionTest {
                                 })
                                 .withExpectedPrompt("alice@BaBa> Account 1 balance € 0,00\nalice@BaBa> "),
                         ArgumentsBuilder.of("account delete 1", "exit")
-                                .withSetup(app -> login(app, "alice", "secret"))
+                                .withSetup(app -> {
+                                    AuthenticatedUser user = login(app, "alice", "secret");
+                                    app.accounts().create(user);
+                                })
                                 .withExpectedPrompt("alice@BaBa> Account 1 deleted.\nalice@BaBa> "),
                         ArgumentsBuilder.of("deposit 1 20.00", "exit")
                                 .withSetup(app -> login(app, "alice", "secret"))

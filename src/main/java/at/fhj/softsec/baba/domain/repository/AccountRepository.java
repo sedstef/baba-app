@@ -15,4 +15,5 @@ public interface AccountRepository {
 
     Account save(long accountNumber, User user);
 
+    void delete(User user, Long accountNumber);
 }

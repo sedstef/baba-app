@@ -34,4 +34,10 @@ public class AccountsService {
                 .orElseThrow();
         return repository.retrieveByNumber(user,accountNumber);
     }
+
+    public void deleteAccount(AuthenticatedUser authenticatedUser, Long accountNumber) {
+        User user = userRepository.findById(authenticatedUser.getUserId())
+                .orElseThrow();
+        repository.delete(user,accountNumber);
+    }
 }

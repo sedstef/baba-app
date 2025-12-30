@@ -5,6 +5,8 @@ import at.fhj.softsec.baba.domain.model.User;
 import at.fhj.softsec.baba.domain.repository.AccountRepository;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -53,7 +55,7 @@ public class AccountFileRepository implements AccountRepository {
                     .orElse(0L);
             return ++lastAccountId;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -62,6 +64,19 @@ public class AccountFileRepository implements AccountRepository {
         Account account = new Account(accountNumber, user.userId());
         storage.save(accountFile(account.userId(), account.number()), account);
         return account;
+    }
+
+    @Override
+    public void delete(User user, Long accountNumber) {
+        Account account = retrieveByNumber(user, accountNumber);
+        if(BigDecimal.ZERO.compareTo(account.balance()) != 0){
+            throw new IllegalStateException("Cannot delete a unbalanced account");
+        }
+        try {
+            Files.delete(accountFile(user.userId(),accountNumber));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     private Path accountFile(String userId, Long accountNumber) {
@@ -75,7 +90,7 @@ public class AccountFileRepository implements AccountRepository {
                     .filter(path -> path.getFileName().toString().endsWith(".enc"))
                     .map(accountFile -> storage.load(accountFile, Account.class));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
