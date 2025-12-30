@@ -2,7 +2,7 @@ package at.fhj.softsec.baba.cli;
 
 import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.ApplicationBootstrap;
-import at.fhj.softsec.baba.service.AuthenticatedUser;
+import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
 import at.fhj.softsec.baba.security.CryptoUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

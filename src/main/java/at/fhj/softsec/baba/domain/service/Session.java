@@ -1,4 +1,4 @@
-package at.fhj.softsec.baba.service;
+package at.fhj.softsec.baba.domain.service;
 
 import java.util.Optional;
 

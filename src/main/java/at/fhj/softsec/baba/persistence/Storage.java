@@ -1,7 +1,6 @@
-package at.fhj.softsec.baba.storage;
+package at.fhj.softsec.baba.persistence;
 
 import at.fhj.softsec.baba.security.CryptoUtils;
-import at.fhj.softsec.baba.storage.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.crypto.SecretKey;
@@ -29,10 +28,10 @@ public class Storage {
         }
     }
 
-    public void save(Path path, User user) {
+    public <T> void save(Path path, T object) {
         try {
             Files.createDirectories(path.getParent());
-            byte[] bytes = new ObjectMapper().writeValueAsBytes(user);
+            byte[] bytes = new ObjectMapper().writeValueAsBytes(object);
             Files.write(path, CryptoUtils.encrypt(bytes, secretKey));
         } catch (GeneralSecurityException | IOException e) {
             throw new RuntimeException(e);
@@ -40,6 +39,18 @@ public class Storage {
     }
 
     public Path baseDir(String item) {
-        return  dataDir.resolve(item);
+        return dataDir.resolve(item);
+    }
+
+    public Path userDir() {
+        return baseDir("users");
+    }
+
+    public Path userDir(String userId) {
+        return userDir().resolve(userId);
+    }
+
+    public Path accountsDir(String userId) {
+        return userDir(userId).resolve("accounts");
     }
 }

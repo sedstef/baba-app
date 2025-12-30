@@ -1,4 +1,4 @@
-package at.fhj.softsec.baba.storage.model;
+package at.fhj.softsec.baba.domain.model;
 import java.util.Objects;
 
 public record User (String userId, String passwordHash) {

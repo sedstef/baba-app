@@ -1,6 +1,6 @@
-package at.fhj.softsec.baba.storage;
+package at.fhj.softsec.baba.domain.repository;
 
-import at.fhj.softsec.baba.storage.model.User;
+import at.fhj.softsec.baba.domain.model.User;
 
 import java.util.Optional;
 

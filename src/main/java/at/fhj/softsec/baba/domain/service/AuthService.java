@@ -1,8 +1,8 @@
-package at.fhj.softsec.baba.service;
+package at.fhj.softsec.baba.domain.service;
 
 import at.fhj.softsec.baba.security.CryptoUtils;
-import at.fhj.softsec.baba.storage.model.User;
-import at.fhj.softsec.baba.storage.UserRepository;
+import at.fhj.softsec.baba.domain.model.User;
+import at.fhj.softsec.baba.domain.repository.UserRepository;
 
 import java.util.Objects;
 

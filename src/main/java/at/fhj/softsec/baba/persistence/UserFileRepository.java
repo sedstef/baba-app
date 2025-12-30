@@ -1,6 +1,7 @@
-package at.fhj.softsec.baba.storage;
+package at.fhj.softsec.baba.persistence;
 
-import at.fhj.softsec.baba.storage.model.User;
+import at.fhj.softsec.baba.domain.model.User;
+import at.fhj.softsec.baba.domain.repository.UserRepository;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,6 +34,6 @@ public class UserFileRepository implements UserRepository {
     }
 
     private Path userFile(String userId) {
-        return storage.baseDir("users").resolve(userId).resolve("user.enc");
+        return storage.userDir(userId).resolve("user.enc");
     }
 }

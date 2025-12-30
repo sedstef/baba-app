@@ -1,10 +1,9 @@
 package at.fhj.softsec.baba.cli.commands;
 
 import at.fhj.softsec.baba.Application;
-import at.fhj.softsec.baba.service.AuthService;
 import at.fhj.softsec.baba.cli.CliContext;
 import at.fhj.softsec.baba.cli.Command;
-import at.fhj.softsec.baba.service.AuthenticatedUser;
+import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
 
 import java.io.IOException;
 import java.util.Arrays;

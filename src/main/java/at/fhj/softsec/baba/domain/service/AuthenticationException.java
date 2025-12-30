@@ -1,4 +1,4 @@
-package at.fhj.softsec.baba.service;
+package at.fhj.softsec.baba.domain.service;
 
 public class AuthenticationException extends RuntimeException {
     public AuthenticationException(String message) {

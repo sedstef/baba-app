@@ -1,7 +1,6 @@
 package at.fhj.softsec.baba.cli.commands;
 
 import at.fhj.softsec.baba.Application;
-import at.fhj.softsec.baba.service.AuthService;
 import at.fhj.softsec.baba.cli.CliContext;
 import at.fhj.softsec.baba.cli.Command;
 
