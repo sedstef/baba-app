@@ -1,12 +1,13 @@
 package at.fhj.softsec.baba.cli.commands;
 
 import at.fhj.softsec.baba.Application;
+import at.fhj.softsec.baba.cli.AuthenticatedCommand;
 import at.fhj.softsec.baba.cli.CliContext;
-import at.fhj.softsec.baba.cli.Command;
+import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
 
 import java.io.IOException;
 
-public class TransferCommand implements Command {
+public class TransferCommand extends AuthenticatedCommand {
     @Override
     public String name() {
         return "transfer";
@@ -18,7 +19,7 @@ public class TransferCommand implements Command {
     }
 
     @Override
-    public void execute(String[] args, Application app, CliContext context) throws IOException {
+    protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) throws IOException {
         //AccountService.getInstance().createAccount(context);
         Number sourceAccount = Integer.parseInt(args[0]);
         Number targetAccount = Integer.parseInt(args[1]);
