@@ -94,38 +94,38 @@ public class ZionTest {
                         ArgumentsBuilder.of("register", "alice", "secret", "secret", "exit")
                                 .withExpectedPrompt("BaBa> Username: Password: Verify password: alice@BaBa> "),
                         ArgumentsBuilder.of("login alice", "secret", "exit")
-                                .withExpectedPrompt("BaBa> Password: Login successful.\nalice@BaBa> ")
-                                .withSetup(app -> app.auth().register("alice", "secret".toCharArray())),
+                                .withSetup(app -> app.auth().register("alice", "secret".toCharArray()))
+                                .withExpectedPrompt("BaBa> Password: Login successful.\nalice@BaBa> "),
                         ArgumentsBuilder.of("logout", "exit")
-                                .withExpectedPrompt("alice@BaBa> Logout successful.\nBaBa> ")
-                                .withSetup(app -> login(app, "alice", "secret")),
+                                .withSetup(app -> login(app, "alice", "secret"))
+                                .withExpectedPrompt("alice@BaBa> Logout successful.\nBaBa> "),
                         ArgumentsBuilder.of("account list", "exit")
-                                .withExpectedPrompt("alice@BaBa> Account listing:\n1 balance € 0,00\nalice@BaBa> ")
                                 .withSetup(app -> {
                                     AuthenticatedUser user = login(app, "alice", "secret");
                                     app.accounts().create(user);
-                                }),
+                                })
+                                .withExpectedPrompt("alice@BaBa> Account listing:\n1 balance € 0,00\nalice@BaBa> "),
                         ArgumentsBuilder.of("account create", "exit")
-                                .withExpectedPrompt("alice@BaBa> Account 1 created.\nalice@BaBa> ")
-                                .withSetup(app -> login(app, "alice", "secret")),
+                                .withSetup(app -> login(app, "alice", "secret"))
+                                .withExpectedPrompt("alice@BaBa> Account 1 created.\nalice@BaBa> "),
                         ArgumentsBuilder.of("account show 1", "exit")
-                                .withExpectedPrompt("alice@BaBa> Account 1 balance € 0,00\nalice@BaBa> ")
                                 .withSetup(app -> {
                                     AuthenticatedUser user = login(app, "alice", "secret");
                                     app.accounts().create(user);
-                                }),
+                                })
+                                .withExpectedPrompt("alice@BaBa> Account 1 balance € 0,00\nalice@BaBa> "),
                         ArgumentsBuilder.of("account delete 1", "exit")
-                                .withExpectedPrompt("alice@BaBa> Account 1 deleted.\nalice@BaBa> ")
-                                .withSetup(app -> login(app, "alice", "secret")),
+                                .withSetup(app -> login(app, "alice", "secret"))
+                                .withExpectedPrompt("alice@BaBa> Account 1 deleted.\nalice@BaBa> "),
                         ArgumentsBuilder.of("deposit 1 20.00", "exit")
-                                .withExpectedPrompt("alice@BaBa> Account 1 balance € 20,00.\nalice@BaBa> ")
-                                .withSetup(app -> login(app, "alice", "secret")),
+                                .withSetup(app -> login(app, "alice", "secret"))
+                                .withExpectedPrompt("alice@BaBa> Account 1 balance € 20,00.\nalice@BaBa> "),
                         ArgumentsBuilder.of("withdrawal 1 20.00", "exit")
                                 .withExpectedPrompt("alice@BaBa> Account 1 balance € 20,00.\nalice@BaBa> ")
                                 .withSetup(app -> login(app, "alice", "secret")),
                         ArgumentsBuilder.of("transfer 1 2 20.00", "exit")
-                                .withExpectedPrompt("alice@BaBa> Account 1 balance € 20,00.\nAccount 2 balance € 20,00.\nalice@BaBa> ")
                                 .withSetup(app -> login(app, "alice", "secret"))
+                                .withExpectedPrompt("alice@BaBa> Account 1 balance € 20,00.\nAccount 2 balance € 20,00.\nalice@BaBa> ")
                 )
                 .map(ArgumentsBuilder::build);
     }
