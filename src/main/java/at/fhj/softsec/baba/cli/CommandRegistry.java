@@ -1,5 +1,7 @@
 package at.fhj.softsec.baba.cli;
 
+import at.fhj.softsec.baba.Application;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -39,10 +41,10 @@ public class CommandRegistry implements Command {
         }
     }
 
-    public void execute(String[] tokens, CliContext ctx) throws IOException {
+    public void execute(String[] tokens, Application app, CliContext ctx) throws IOException {
         Command command = commands.get(tokens[0]);
         if (command != null) {
-            command.execute(Arrays.copyOfRange(tokens, 1, tokens.length), ctx);
+            command.execute(Arrays.copyOfRange(tokens, 1, tokens.length), app, ctx);
         } else {
             ctx.out.println("Unknown command: " + tokens[0]);
         }

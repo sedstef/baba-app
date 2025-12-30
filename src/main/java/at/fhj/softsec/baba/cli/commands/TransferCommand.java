@@ -1,5 +1,6 @@
 package at.fhj.softsec.baba.cli.commands;
 
+import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.cli.CliContext;
 import at.fhj.softsec.baba.cli.Command;
 
@@ -17,7 +18,7 @@ public class TransferCommand implements Command {
     }
 
     @Override
-    public void execute(String[] args, CliContext context) throws IOException {
+    public void execute(String[] args, Application app, CliContext context) throws IOException {
         //AccountService.getInstance().createAccount(context);
         Number sourceAccount = Integer.parseInt(args[0]);
         Number targetAccount = Integer.parseInt(args[1]);

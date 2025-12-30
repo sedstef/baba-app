@@ -4,6 +4,14 @@ import java.io.*;
 import java.util.Objects;
 
 public class CliContext {
+
+    public static CliContext ofDefault() {
+        return new CliContext(
+            new BufferedReader(new InputStreamReader(System.in)),
+            new PrintWriter(System.out, true)
+        );
+    }
+
     public final BufferedReader in;
     public final PrintWriter out;
 

@@ -1,5 +1,7 @@
 package at.fhj.softsec.baba.cli;
 
+import at.fhj.softsec.baba.Application;
+
 import java.io.IOException;
 
 public interface Command {
@@ -7,7 +9,7 @@ public interface Command {
 
     String description();
 
-    void execute(String[] args, CliContext context) throws IOException;
+    void execute(String[] args, Application app, CliContext context) throws IOException;
 
     interface CommandVisitor{
 

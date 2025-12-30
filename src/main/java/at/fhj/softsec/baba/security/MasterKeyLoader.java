@@ -1,4 +1,4 @@
-package at.fhj.softsec.baba.storage;
+package at.fhj.softsec.baba.security;
 
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -18,15 +18,13 @@ public final class MasterKeyLoader {
     private static final int KEY_LENGTH = 256; // bits
     private static final int SALT_LENGTH = 16; // bytes
 
-    private static final Path SALT_FILE = Path.of("data", "master.salt");
-
     private MasterKeyLoader() {
         // utility class
     }
 
-    public static SecretKey load(char[] masterPassword) throws GeneralSecurityException {
-        byte[] salt = loadOrCreateSalt();
-        SecretKeyFactory factory = SecretKeyFactory.getInstance(KDF_ALGORITHM);
+    public static SecretKey load(Path data, char[] masterPassword) throws GeneralSecurityException {
+        byte[] salt = loadOrCreateSalt(data.resolve("master.salt"));
+
         PBEKeySpec spec = new PBEKeySpec(
                 masterPassword,
                 salt,
@@ -34,23 +32,24 @@ public final class MasterKeyLoader {
                 KEY_LENGTH
         );
 
+        SecretKeyFactory factory = SecretKeyFactory.getInstance(KDF_ALGORITHM);
         byte[] keyBytes = factory.generateSecret(spec).getEncoded();
         return new SecretKeySpec(keyBytes, CIPHER_ALGORITHM);
     }
 
-    private static byte[] loadOrCreateSalt() {
+    private static byte[] loadOrCreateSalt(Path saltFile) {
         try {
-            if (Files.exists(SALT_FILE)) {
-                return Files.readAllBytes(SALT_FILE);
+            if (Files.exists(saltFile)) {
+                return Files.readAllBytes(saltFile);
             }
 
-            Files.createDirectories(SALT_FILE.getParent());
+            Files.createDirectories(saltFile.getParent());
 
             byte[] salt = new byte[SALT_LENGTH];
             SecureRandom random = new SecureRandom();
             random.nextBytes(salt);
 
-            Files.write(SALT_FILE, salt);
+            Files.write(saltFile, salt);
             return salt;
 
         } catch (IOException e) {

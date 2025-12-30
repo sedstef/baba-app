@@ -1,22 +1,19 @@
 package at.fhj.softsec.baba.cli;
 
+import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.cli.commands.*;
-import at.fhj.softsec.baba.service.AuthService;
-import at.fhj.softsec.baba.service.InvalidPasswordException;
-import at.fhj.softsec.baba.storage.Storage;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.Optional;
 
 public class Zion {
+    private final Application app;
     private final CliContext context;
     private final CommandRegistry root;
 
-    public Zion(PrintWriter out, BufferedReader in) {
-        context = new CliContext(in, out);
+    public Zion(Application app, CliContext cliContext) {
+        this.app = app;
+        this.context = cliContext;
 
         root = new CommandRegistry("root");
         root.register(new Command() {
@@ -31,7 +28,7 @@ public class Zion {
             }
 
             @Override
-            public void execute(String[] args, CliContext context) throws IOException {
+            public void execute(String[] args, Application app, CliContext context) throws IOException {
                 if (args.length > 0) {
                     String cmdName = args[0];
                     root.visitCommands(cmd -> {
@@ -61,36 +58,22 @@ public class Zion {
     }
 
     public void promptLoop() {
-        unlockStorage();
-
         do {
             try {
-                String prompt = Optional.ofNullable(AuthService.getInstance().getCurrentUsername())
-                        .map(username -> username + "@BaBa> ")
+                String prompt = app.session().getCurrentUser()
+                        .map(user -> user.getUserId() + "@BaBa> ")
                         .orElse("BaBa> ");
                 String line = context.prompt(prompt);
                 if (line == null || line.equals("exit")) break;
 
                 String[] tokens = line.trim().split("\\s+");
                 if (tokens.length == 0) continue;
-                root.execute(tokens, context);
+                root.execute(tokens, app, context);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         } while (true);
     }
 
-    private void unlockStorage() {
-        while (Storage.getInstance().isLocked()) {
-            char[] masterPassword = context.promptPassword("Enter master password to unlock BaBa:");
-            try {
-                Storage.getInstance().unlock(masterPassword);
-            } catch (InvalidPasswordException e) {
-                context.out.println("Invalid master password, try again.");
-            } finally {
-                Arrays.fill(masterPassword, '\0');
-            }
-        }
-    }
 
 }

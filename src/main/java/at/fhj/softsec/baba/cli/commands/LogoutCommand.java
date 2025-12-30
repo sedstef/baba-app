@@ -1,5 +1,6 @@
 package at.fhj.softsec.baba.cli.commands;
 
+import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.service.AuthService;
 import at.fhj.softsec.baba.cli.CliContext;
 import at.fhj.softsec.baba.cli.Command;
@@ -19,8 +20,8 @@ public class LogoutCommand implements Command {
     }
 
     @Override
-    public void execute(String[] args, CliContext ctx) throws IOException {
-        AuthService.getInstance().logout();
+    public void execute(String[] args, Application app, CliContext ctx) throws IOException {
+        app.session().logout();
         ctx.out.println("Logout successful.");
     }
 }

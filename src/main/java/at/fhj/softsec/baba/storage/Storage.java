@@ -1,45 +1,45 @@
 package at.fhj.softsec.baba.storage;
 
-import at.fhj.softsec.baba.service.InvalidPasswordException;
+import at.fhj.softsec.baba.security.Encryptor;
+import at.fhj.softsec.baba.storage.model.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.crypto.SecretKey;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 
 public class Storage {
-    private final static Storage INSTANCE = new Storage();
 
-    public static Storage getInstance() {
-        return INSTANCE;
+    private final SecretKey secretKey;
+    private final Path dataDir;
+
+    public Storage(Path dataDir, SecretKey secretKey) {
+        this.dataDir = dataDir;
+        this.secretKey = secretKey;
     }
 
-    private boolean locked = true;
-    private SecretKey secretKey;
-
-    public boolean isLocked() {
-        return locked;
-    }
-
-    public void unlock(char[] masterPassword) throws InvalidPasswordException {
+    public <T> T load(Path path, Class<T> type) {
         try {
-            secretKey = MasterKeyLoader.load(masterPassword);
-            locked = false;
-        } catch (GeneralSecurityException e) {
-            throw new InvalidPasswordException("Invalid master password");
+            byte[] bytes = Encryptor.decrypt(Files.readAllBytes(path), secretKey);
+            return new ObjectMapper().readValue(bytes, type);
+        } catch (GeneralSecurityException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public UserRepository getUserRepository() {
-        if (isLocked()) {
-            throw new IllegalStateException("Storage is locked");
+    public void save(Path path, User user) {
+        try {
+            Files.createDirectories(path.getParent());
+            byte[] bytes = new ObjectMapper().writeValueAsBytes(user);
+            Files.write(path, Encryptor.encrypt(bytes, secretKey));
+        } catch (GeneralSecurityException | IOException e) {
+            throw new RuntimeException(e);
         }
-        return new UserRepository(secretKey);
     }
 
-    public static class UserRepository {
-        private final SecretKey secretKey;
-
-        UserRepository(SecretKey secretKey) {
-            this.secretKey = secretKey;
-        }
+    public Path baseDir(String item) {
+        return  dataDir.resolve(item);
     }
 }

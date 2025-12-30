@@ -1,8 +1,10 @@
 package at.fhj.softsec.baba.cli.commands;
 
+import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.service.AuthService;
 import at.fhj.softsec.baba.cli.CliContext;
 import at.fhj.softsec.baba.cli.Command;
+import at.fhj.softsec.baba.service.AuthenticatedUser;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,7 +22,7 @@ public class RegisterCommand implements Command {
     }
 
     @Override
-    public void execute(String[] args, CliContext ctx) throws IOException {
+    public void execute(String[] args, Application app, CliContext ctx) throws IOException {
 
         //ctx.out.println("Creating new user (Ctrl+C to cancel)");
 
@@ -34,7 +36,9 @@ public class RegisterCommand implements Command {
                 ctx.out.println("Passwords do not match.");
                 return;
             }
-            AuthService.getInstance().createUser(username, pw1);
+            app.auth().register(username, pw1);
+            AuthenticatedUser authenticatedUser = app.auth().login(username, pw1);
+            app.session().login(authenticatedUser);
         } finally {
             // IMPORTANT: wipe passwords
             Arrays.fill(pw1, '\0');

@@ -1,67 +1,58 @@
 package at.fhj.softsec.baba.service;
 
-import at.fhj.softsec.baba.storage.Encryptor;
+import at.fhj.softsec.baba.security.PasswordHasher;
+import at.fhj.softsec.baba.storage.model.User;
+import at.fhj.softsec.baba.storage.UserRepository;
 
-import java.io.File;
-import java.nio.file.Files;
 import java.util.Objects;
 
 public class AuthService {
 
-    private final static AuthService instance = new AuthService();
+    private final UserRepository userRepository;
 
-    public static AuthService getInstance() {
-        return instance;
+    public AuthService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    private File storageDir;
-    private String currentUsername;
+    public void register(String userId, char[] password) {
 
-    private AuthService() {
-        this.storageDir = new File("data");
-    }
+        validateUserId(userId);
+        Objects.requireNonNull(password);
 
-    public void setStorageDir(File storageDir) {
-        this.storageDir = Objects.requireNonNull(storageDir);
-    }
-
-    public void createUser(String username, char[] password) {
-        if (!storageDir.exists()) {
-            storageDir.mkdirs();
+        if (userRepository.exists(userId)) {
+            throw new AuthenticationException("User already exists");
         }
-        File file = new File(storageDir, String.format("%s.dat", username));
-        if (file.exists()) {
-            throw new RuntimeException("User already exists");
-        }
-        try {
-            byte[] encrypted = Encryptor.encrypt("".getBytes(), password);
-            Files.write(file.toPath(), encrypted);
-            this.currentUsername = username;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+
+        String passwordHash = PasswordHasher.hash(password);
+
+        User user = new User(userId, passwordHash);
+        userRepository.save(user);
     }
 
-    public void loginUser(String username, char[] password) {
-        File file = new File(storageDir, String.format("%s.dat", username));
-        if (!file.exists()) {
-            throw new RuntimeException("User or password invalid");
+    public AuthenticatedUser login(String userId, char[] password) {
+
+        Objects.requireNonNull(password);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new AuthenticationException("Invalid credentials")
+                );
+
+        boolean valid = PasswordHasher.verify(
+                password,
+                user.passwordHash()
+        );
+
+        if (!valid) {
+            throw new AuthenticationException("Invalid credentials");
         }
-        try {
-            byte[] encrypted = Files.readAllBytes(file.toPath());
-            // Try to decrypt to verify password
-            Encryptor.decrypt(encrypted, password);
-            this.currentUsername = username;
-        } catch (Exception e) {
-            throw new RuntimeException("User or password invalid");
-        }
+
+        return new AuthenticatedUser(user.userId());
     }
 
-    public String getCurrentUsername() {
-        return currentUsername;
-    }
-
-    public void logout() {
-        this.currentUsername = null;
+    private void validateUserId(String userId) {
+        if (!userId.matches("^[a-zA-Z0-9_]{3,20}$")) {
+            throw new IllegalArgumentException("Invalid user id");
+        }
     }
 }

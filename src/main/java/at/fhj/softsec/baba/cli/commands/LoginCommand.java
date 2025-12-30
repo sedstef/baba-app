@@ -1,8 +1,10 @@
 package at.fhj.softsec.baba.cli.commands;
 
+import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.service.AuthService;
 import at.fhj.softsec.baba.cli.CliContext;
 import at.fhj.softsec.baba.cli.Command;
+import at.fhj.softsec.baba.service.AuthenticatedUser;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,7 +22,7 @@ public class LoginCommand implements Command {
     }
 
     @Override
-    public void execute(String[] args, CliContext ctx) throws IOException {
+    public void execute(String[] args, Application app, CliContext ctx) throws IOException {
 
         //ctx.out.println("Creating new user (Ctrl+C to cancel)");
 
@@ -28,7 +30,8 @@ public class LoginCommand implements Command {
         char[] pw = ctx.promptPassword("Password: ");
 
         try {
-            AuthService.getInstance().loginUser(username, pw);
+            AuthenticatedUser user = app.auth().login(username, pw);
+            app.session().login(user);
             ctx.out.println("Login successful.");
         } finally {
             // IMPORTANT: wipe passwords
