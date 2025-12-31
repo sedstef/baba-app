@@ -22,7 +22,7 @@ public class AccountDeleteCommand extends AuthenticatedCommand {
     protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) throws IOException {
         Long accountNumber = Long.valueOf(args[0]);
 
-        app.accounts().deleteAccount(user, accountNumber);
+        app.account().deleteAccount(user, accountNumber);
         context.out.printf("Account %s deleted.\n", accountNumber);
     }
 }

@@ -1,12 +1,12 @@
 package at.fhj.softsec.baba;
 
-import at.fhj.softsec.baba.domain.service.AccountsService;
+import at.fhj.softsec.baba.domain.service.AccountService;
 import at.fhj.softsec.baba.domain.service.AuthService;
 import at.fhj.softsec.baba.domain.service.Session;
+import at.fhj.softsec.baba.domain.service.TransferService;
 import at.fhj.softsec.baba.persistence.AccountFileRepository;
 import at.fhj.softsec.baba.persistence.Storage;
 import at.fhj.softsec.baba.persistence.UserFileRepository;
-import at.fhj.softsec.baba.domain.repository.UserRepository;
 
 import javax.crypto.SecretKey;
 import java.nio.file.Path;
@@ -19,10 +19,16 @@ public class ApplicationBootstrap {
         Storage storage = new Storage(dataDir, secretKey);
 
         final AuthService authService = new AuthService(new UserFileRepository(storage));
-        final AccountsService accountsService = new AccountsService(
+        final AccountService accountService = new AccountService(
                 new AccountFileRepository(storage),
                 new UserFileRepository(storage)
         );
+
+        final TransferService transferService = new TransferService(
+                new AccountFileRepository(storage),
+                new UserFileRepository(storage)
+        );
+
         return new Application() {
 
             @Override
@@ -36,8 +42,13 @@ public class ApplicationBootstrap {
             }
 
             @Override
-            public AccountsService accounts() {
-                return accountsService;
+            public AccountService account() {
+                return accountService;
+            }
+
+            @Override
+            public TransferService transfer() {
+                return transferService;
             }
         };
     }

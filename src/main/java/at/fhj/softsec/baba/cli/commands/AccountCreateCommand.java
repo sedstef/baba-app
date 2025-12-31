@@ -21,7 +21,7 @@ public class AccountCreateCommand extends AuthenticatedCommand {
 
     @Override
     protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) throws IOException {
-        OwnedAccount ownedAccount = app.accounts().create(user);
+        OwnedAccount ownedAccount = app.account().create(user);
 
         context.out.printf("Account %s created.\n", ownedAccount.getNumber());
     }

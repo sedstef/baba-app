@@ -122,7 +122,7 @@ public class ZionTest {
                                 .withSetup(app -> {
                                     createAccount(app, "alice", "secret");
                                     User bob = app.auth().register("bob", "secret".toCharArray());
-                                    app.accounts().create(bob);
+                                    app.account().create(bob);
                                 })
                                 .withExpectedPrompt("alice@BaBa> Account 1 balance € -20,00.\nalice@BaBa> ")
                 )
@@ -131,7 +131,7 @@ public class ZionTest {
 
     private static void createAccount(Application app, String userId, String password) {
         AuthenticatedUser user = login(app, userId, password);
-        app.accounts().create(user);
+        app.account().create(user);
     }
 
     private static AuthenticatedUser login(Application app, String userId, String password) {

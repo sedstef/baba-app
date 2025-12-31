@@ -1,8 +1,9 @@
 package at.fhj.softsec.baba;
 
-import at.fhj.softsec.baba.domain.service.AccountsService;
+import at.fhj.softsec.baba.domain.service.AccountService;
 import at.fhj.softsec.baba.domain.service.AuthService;
 import at.fhj.softsec.baba.domain.service.Session;
+import at.fhj.softsec.baba.domain.service.TransferService;
 
 public interface Application {
 
@@ -10,5 +11,7 @@ public interface Application {
 
     AuthService auth();
 
-    AccountsService accounts();
+    AccountService account();
+
+    TransferService transfer();
 }

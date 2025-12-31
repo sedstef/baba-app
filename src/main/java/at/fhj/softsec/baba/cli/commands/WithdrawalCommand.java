@@ -25,7 +25,7 @@ public class WithdrawalCommand extends AuthenticatedCommand {
         Long accountNumber = Long.parseLong(args[0]);
         BigDecimal amount = BigDecimal.valueOf(Double.parseDouble(args[1]));
 
-        OwnedAccount ownedAccount = app.accounts().withdrawal(user, accountNumber, amount);
+        OwnedAccount ownedAccount = app.transfer().withdrawal(user, accountNumber, amount);
         context.out.printf("Account %d balance € %,.2f.\n", ownedAccount.getNumber(), ownedAccount.getBalance());
     }
 }

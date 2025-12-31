@@ -25,7 +25,7 @@ public class DepositCommand extends AuthenticatedCommand {
         Long accountNumber = Long.parseLong(args[0]);
         BigDecimal amount = BigDecimal.valueOf(Double.parseDouble(args[1]));
 
-        OwnedAccount ownedAccount = app.accounts().deposit(user, accountNumber, amount);
+        OwnedAccount ownedAccount = app.transfer().deposit(user, accountNumber, amount);
         context.out.printf("Account %d balance € %,.2f.\n", ownedAccount.getNumber(), ownedAccount.getBalance());
     }
 }

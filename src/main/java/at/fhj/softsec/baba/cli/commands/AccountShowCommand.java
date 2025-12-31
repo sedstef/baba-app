@@ -23,7 +23,7 @@ public class AccountShowCommand extends AuthenticatedCommand {
     protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) throws IOException {
         Long accountNumber = Long.valueOf(args[0]);
 
-        OwnedAccount ownedAccount = app.accounts().retrieveAccount(user, accountNumber);
+        OwnedAccount ownedAccount = app.account().retrieveAccount(user, accountNumber);
         context.out.printf("Account %d balance € %,.2f\n" , ownedAccount.getNumber(), ownedAccount.getBalance());
     }
 }

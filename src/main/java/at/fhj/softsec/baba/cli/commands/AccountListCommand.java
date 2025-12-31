@@ -24,7 +24,7 @@ public class AccountListCommand extends AuthenticatedCommand {
     protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) throws IOException {
 
         context.out.println("Account listing:");
-        app.accounts().retrieveAccounts(user).stream()
+        app.account().retrieveAccounts(user).stream()
                 .map(account -> format("%s balance € %,.2f", account.getNumber(), account.getBalance()))
                 .forEach(context.out::println);
     }

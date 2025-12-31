@@ -26,7 +26,7 @@ public class TransferCommand extends AuthenticatedCommand {
         Long targetAccount = Long.parseLong(args[1]);
         BigDecimal amount = BigDecimal.valueOf(Double.parseDouble(args[2]));
 
-        OwnedAccount ownedAccount = app.accounts().transfer(user, sourceAccount, targetAccount, amount);
+        OwnedAccount ownedAccount = app.transfer().transfer(user, sourceAccount, targetAccount, amount);
 
         context.out.printf("Account %d balance € %,.2f.\n" , ownedAccount.getNumber(), ownedAccount.getBalance());
     }
