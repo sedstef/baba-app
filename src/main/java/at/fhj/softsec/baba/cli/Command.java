@@ -9,9 +9,9 @@ public interface Command {
 
     String description();
 
-    void execute(String[] args, Application app, CliContext context) throws IOException;
+    void execute(String[] args, Application app, CliContext context);
 
-    interface CommandVisitor{
+    interface CommandVisitor {
 
         void visit(Command command);
     }

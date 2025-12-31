@@ -19,7 +19,7 @@ public class AccountDeleteCommand extends AuthenticatedCommand {
     }
 
     @Override
-    protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) throws IOException {
+    protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user)  {
         Long accountNumber = Long.valueOf(args[0]);
 
         app.account().deleteAccount(user, accountNumber);

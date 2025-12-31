@@ -28,7 +28,7 @@ public class Zion {
             }
 
             @Override
-            public void execute(String[] args, Application app, CliContext context) throws IOException {
+            public void execute(String[] args, Application app, CliContext context) {
                 if (args.length > 0) {
                     String cmdName = args[0];
                     root.visitCommands(cmd -> {
@@ -59,19 +59,15 @@ public class Zion {
 
     public void promptLoop() {
         do {
-            try {
-                String prompt = app.session().getCurrentUser()
-                        .map(user -> user.getUserId() + "@BaBa> ")
-                        .orElse("BaBa> ");
-                String line = context.prompt(prompt);
-                if (line == null || line.equals("exit")) break;
+            String prompt = app.session().getCurrentUser()
+                    .map(user -> user.getUserId() + "@BaBa> ")
+                    .orElse("BaBa> ");
+            String line = context.prompt(prompt);
+            if (line == null || line.equals("exit")) break;
 
-                String[] tokens = line.trim().split("\\s+");
-                if (tokens.length == 0) continue;
-                root.execute(tokens, app, context);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            String[] tokens = line.trim().split("\\s+");
+            if (tokens.length == 0) continue;
+            root.execute(tokens, app, context);
         } while (true);
     }
 

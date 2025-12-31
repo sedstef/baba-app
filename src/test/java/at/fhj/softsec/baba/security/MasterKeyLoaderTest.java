@@ -11,7 +11,6 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.io.FileMatchers.anExistingFile;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.platform.commons.util.Preconditions.notNull;
 
 public class MasterKeyLoaderTest {
 

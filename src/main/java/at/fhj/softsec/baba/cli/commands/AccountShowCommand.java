@@ -20,7 +20,7 @@ public class AccountShowCommand extends AuthenticatedCommand {
     }
 
     @Override
-    protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) throws IOException {
+    protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user)  {
         Long accountNumber = Long.valueOf(args[0]);
 
         OwnedAccount ownedAccount = app.account().retrieveAccount(user, accountNumber);

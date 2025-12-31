@@ -7,11 +7,11 @@ import java.io.IOException;
 
 public abstract class AuthenticatedCommand implements Command {
     @Override
-    public final void execute(String[] args, Application app, CliContext context) throws IOException {
+    public final void execute(String[] args, Application app, CliContext context) {
         AuthenticatedUser user = app.session().getCurrentUser()
                 .orElseThrow(() -> new IllegalStateException("User not authenticated"));
         execute(args, app, context, user);
     }
 
-    protected abstract void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) throws IOException;
+    protected abstract void execute(String[] args, Application app, CliContext context, AuthenticatedUser user);
 }

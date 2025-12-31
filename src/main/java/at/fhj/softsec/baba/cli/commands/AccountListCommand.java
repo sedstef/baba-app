@@ -21,7 +21,7 @@ public class AccountListCommand extends AuthenticatedCommand {
     }
 
     @Override
-    protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) throws IOException {
+    protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user)  {
 
         context.out.println("Account listing:");
         app.account().retrieveAccounts(user).stream()

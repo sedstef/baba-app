@@ -26,7 +26,7 @@ public class CliContext {
         try {
             return in.readLine();
         } catch (IOException ex) {
-            throw new UncheckedIOException("Failed to read input", ex);
+            throw new UncheckedIOException("Failed to read input stdin", ex);
         }
     }
 

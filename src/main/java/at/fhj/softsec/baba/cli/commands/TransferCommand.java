@@ -21,7 +21,7 @@ public class TransferCommand extends AuthenticatedCommand {
     }
 
     @Override
-    protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) throws IOException {
+    protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user)  {
         Long sourceAccount = Long.parseLong(args[0]);
         Long targetAccount = Long.parseLong(args[1]);
         BigDecimal amount = BigDecimal.valueOf(Double.parseDouble(args[2]));

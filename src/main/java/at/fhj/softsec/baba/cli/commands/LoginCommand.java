@@ -21,7 +21,7 @@ public class LoginCommand implements Command {
     }
 
     @Override
-    public void execute(String[] args, Application app, CliContext ctx) throws IOException {
+    public void execute(String[] args, Application app, CliContext ctx) {
 
         //ctx.out.println("Creating new user (Ctrl+C to cancel)");
 

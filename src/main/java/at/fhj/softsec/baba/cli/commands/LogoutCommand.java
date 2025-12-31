@@ -19,7 +19,7 @@ public class LogoutCommand implements Command {
     }
 
     @Override
-    public void execute(String[] args, Application app, CliContext ctx) throws IOException {
+    public void execute(String[] args, Application app, CliContext ctx)  {
         app.session().logout();
         ctx.out.println("Logout successful.");
     }
