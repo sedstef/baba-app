@@ -1,8 +1,9 @@
 package at.fhj.softsec.baba.domain.service;
 
+import at.fhj.softsec.baba.domain.model.ForeignAccount;
 import at.fhj.softsec.baba.domain.model.User;
 import at.fhj.softsec.baba.domain.repository.AccountRepository;
-import at.fhj.softsec.baba.domain.model.Account;
+import at.fhj.softsec.baba.domain.model.OwnedAccount;
 import at.fhj.softsec.baba.domain.repository.UserRepository;
 
 import java.math.BigDecimal;
@@ -17,24 +18,24 @@ public class AccountsService {
         this.userRepository = userRepository;
     }
 
-    public Account create(AuthenticatedUser authenticatedUser) {
+    public OwnedAccount create(AuthenticatedUser authenticatedUser) {
         User user = userRepository.findById(authenticatedUser.getUserId())
                 .orElseThrow();
         return create(user);
     }
 
-    public Account create(User user) {
+    public OwnedAccount create(User user) {
         Long accountNumber = repository.getNextAccountNumber();
-        return repository.save(new Account(accountNumber, user.userId()));
+        return repository.create(user, accountNumber);
     }
 
-    public Collection<Account> retrieveAccounts(AuthenticatedUser authenticatedUser) {
+    public Collection<OwnedAccount> retrieveAccounts(AuthenticatedUser authenticatedUser) {
         User user = userRepository.findById(authenticatedUser.getUserId())
                 .orElseThrow();
         return repository.retrieveAll(user);
     }
 
-    public Account retrieveAccount(AuthenticatedUser authenticatedUser, Long accountNumber) {
+    public OwnedAccount retrieveAccount(AuthenticatedUser authenticatedUser, Long accountNumber) {
         User user = userRepository.findById(authenticatedUser.getUserId())
                 .orElseThrow();
         return repository.retrieveByUserAndNumber(user, accountNumber);
@@ -46,33 +47,35 @@ public class AccountsService {
         repository.delete(user, accountNumber);
     }
 
-    public Account deposit(AuthenticatedUser authenticatedUser, Long accountNumber, BigDecimal amount) {
+    public OwnedAccount deposit(AuthenticatedUser authenticatedUser, Long accountNumber, BigDecimal amount) {
         User user = userRepository.findById(authenticatedUser.getUserId())
                 .orElseThrow();
 
-        return makeMovement(user, accountNumber, amount);
+        OwnedAccount ownedAccount = repository.retrieveByUserAndNumber(user, accountNumber);
+        ownedAccount.deposit(amount);
+        return repository.save(ownedAccount);
     }
 
-    public Account withdrawal(AuthenticatedUser authenticatedUser, Long accountNumber, BigDecimal amount) {
+    public OwnedAccount withdrawal(AuthenticatedUser authenticatedUser, Long accountNumber, BigDecimal amount) {
         User user = userRepository.findById(authenticatedUser.getUserId())
                 .orElseThrow();
 
-        return makeMovement(user, accountNumber, amount.negate());
+        OwnedAccount ownedAccount = repository.retrieveByUserAndNumber(user, accountNumber);
+        ownedAccount.withdraw(amount);
+        return repository.save(ownedAccount);
     }
 
-    private Account makeMovement(User user, Long accountNumber, BigDecimal amount) {
-        Account account = repository.retrieveByUserAndNumber(user, accountNumber);
-        account.addMovement(amount);
-        return repository.save(account);
-    }
-
-    public Account transfer(AuthenticatedUser authenticatedUser, Long sourceNumber, Long targetNumber, BigDecimal amount) {
+    public OwnedAccount transfer(AuthenticatedUser authenticatedUser, Long sourceNumber, Long targetNumber, BigDecimal amount) {
         User user = userRepository.findById(authenticatedUser.getUserId())
                 .orElseThrow();
 
-        Account sourceAccount = makeMovement(user, sourceNumber, amount.negate());
-        Account targetAccount = repository.retrieveByNumber(targetNumber);
-        targetAccount.addMovement(amount);
+        OwnedAccount sourceAccount = repository.retrieveByUserAndNumber(user, sourceNumber);
+        ForeignAccount targetAccount = repository.retrieveByNumber(targetNumber);
+
+        sourceAccount.transferOut(targetAccount, amount);
+        targetAccount.transferIn(sourceAccount, amount);
+
+        repository.save(sourceAccount);
         repository.save(targetAccount);
 
         return sourceAccount;

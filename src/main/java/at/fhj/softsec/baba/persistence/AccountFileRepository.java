@@ -1,7 +1,6 @@
 package at.fhj.softsec.baba.persistence;
 
-import at.fhj.softsec.baba.domain.model.Account;
-import at.fhj.softsec.baba.domain.model.User;
+import at.fhj.softsec.baba.domain.model.*;
 import at.fhj.softsec.baba.domain.repository.AccountRepository;
 
 import java.io.IOException;
@@ -14,7 +13,6 @@ import java.nio.file.PathMatcher;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.stream.Stream;
 
 import static java.lang.String.format;
 
@@ -27,7 +25,7 @@ public class AccountFileRepository implements AccountRepository {
     }
 
     @Override
-    public Collection<Account> retrieveAll(User user) {
+    public Collection<OwnedAccount> retrieveAll(User user) {
         Path accountsDir = storage.accountsDir(user.userId());
         return Files.exists(accountsDir)
                 ? retrieveAccounts(accountsDir)
@@ -35,16 +33,16 @@ public class AccountFileRepository implements AccountRepository {
     }
 
     @Override
-    public Account retrieveByUserAndNumber(User user, Long accountNumber) {
+    public OwnedAccount retrieveByUserAndNumber(User user, Long accountNumber) {
         Path accountFile = accountFile(user.userId(), accountNumber);
         if (Files.notExists(accountFile)) {
             throw new IllegalArgumentException(format("Account %s doesn't exist", accountNumber));
         }
-        return storage.load(accountFile, Account.class);
+        return loadAccount(accountFile);
     }
 
     @Override
-    public Account retrieveByNumber(Long accountNumber) {
+    public ForeignAccount retrieveByNumber(Long accountNumber) {
         PathMatcher matcher = FileSystems.getDefault()
                 .getPathMatcher("glob:**/accounts/*.enc");
         try (var paths = Files.walk(storage.dataDir())) {
@@ -53,7 +51,7 @@ public class AccountFileRepository implements AccountRepository {
                     .filter(matcher::matches)
                     .filter(file -> format("%s.enc", accountNumber).equals(file.getFileName().toString()))
                     .findFirst()
-                    .map(accountFile -> storage.load(accountFile, Account.class))
+                    .map(accountFile -> loadAccount(accountFile))
                     .orElseThrow(() -> new IllegalArgumentException(format("Account %s doesn't exist", accountNumber)));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -67,7 +65,7 @@ public class AccountFileRepository implements AccountRepository {
                     .map(userDir -> userDir.resolve("accounts"))
                     .filter(Files::exists)
                     .flatMap(accountsDir -> retrieveAccounts(accountsDir).stream())
-                    .map(Account::getNumber)
+                    .map(OwnedAccount::getNumber)
                     .max(Comparator.naturalOrder())
                     .orElse(0L);
             return ++lastAccountId;
@@ -77,15 +75,24 @@ public class AccountFileRepository implements AccountRepository {
     }
 
     @Override
-    public Account save(Account account) {
-        storage.save(accountFile(account.getUserId(), account.getNumber()), account);
+    public OwnedAccount create(User user, Long accountNumber) {
+        return save(new Account(accountNumber, user.userId()));
+    }
+
+    @Override
+    public <T extends AccountView> T save(T account) {
+        if (!(account instanceof Account persistableAccount)) {
+            throw new IllegalStateException("Account must be loaded from AccountRepository");
+        }
+        Path accountFile = accountFile(persistableAccount.getUserId(), persistableAccount.getNumber());
+        storage.save(accountFile, persistableAccount);
         return account;
     }
 
     @Override
     public void delete(User user, Long accountNumber) {
-        Account account = retrieveByUserAndNumber(user, accountNumber);
-        if (BigDecimal.ZERO.compareTo(account.getBalance()) != 0) {
+        OwnedAccount ownedAccount = retrieveByUserAndNumber(user, accountNumber);
+        if (BigDecimal.ZERO.compareTo(ownedAccount.getBalance()) != 0) {
             throw new IllegalStateException("Cannot delete a unbalanced account");
         }
         try {
@@ -99,16 +106,20 @@ public class AccountFileRepository implements AccountRepository {
         return storage.accountsDir(userId).resolve(format("%s.enc", accountNumber));
     }
 
-    private Collection<Account> retrieveAccounts(Path accountsDir) {
+    private Collection<OwnedAccount> retrieveAccounts(Path accountsDir) {
         try (var paths = Files.list(accountsDir)) {
             return paths
                     .filter(Files::isRegularFile)
                     .filter(path -> path.getFileName().toString().endsWith(".enc"))
-                    .map(accountFile -> storage.load(accountFile, Account.class))
+                    .map(accountFile -> (OwnedAccount)loadAccount(accountFile))
                     .toList();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    private Account loadAccount(Path accountFile) {
+        return storage.load(accountFile, Account.class);
     }
 
 }

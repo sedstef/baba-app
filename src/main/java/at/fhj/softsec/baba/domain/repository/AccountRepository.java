@@ -1,21 +1,25 @@
 package at.fhj.softsec.baba.domain.repository;
 
-import at.fhj.softsec.baba.domain.model.Account;
+import at.fhj.softsec.baba.domain.model.AccountView;
+import at.fhj.softsec.baba.domain.model.ForeignAccount;
+import at.fhj.softsec.baba.domain.model.OwnedAccount;
 import at.fhj.softsec.baba.domain.model.User;
 
 import java.util.Collection;
 
 public interface AccountRepository {
 
-    Collection<Account> retrieveAll(User user);
+    Collection<OwnedAccount> retrieveAll(User user);
 
-    Account retrieveByUserAndNumber(User user, Long accountNumber);
+    OwnedAccount retrieveByUserAndNumber(User user, Long accountNumber);
 
-    Account retrieveByNumber(Long accountNumber);
+    ForeignAccount retrieveByNumber(Long accountNumber);
 
     Long getNextAccountNumber();
 
-    Account save(Account account);
+    OwnedAccount create(User user, Long accountNumber);
+
+    <T extends AccountView> T save(T account);
 
     void delete(User user, Long accountNumber);
 }

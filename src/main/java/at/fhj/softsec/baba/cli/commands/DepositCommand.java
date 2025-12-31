@@ -3,7 +3,7 @@ package at.fhj.softsec.baba.cli.commands;
 import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.cli.AuthenticatedCommand;
 import at.fhj.softsec.baba.cli.CliContext;
-import at.fhj.softsec.baba.domain.model.Account;
+import at.fhj.softsec.baba.domain.model.OwnedAccount;
 import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
 
 import java.io.IOException;
@@ -25,7 +25,7 @@ public class DepositCommand extends AuthenticatedCommand {
         Long accountNumber = Long.parseLong(args[0]);
         BigDecimal amount = BigDecimal.valueOf(Double.parseDouble(args[1]));
 
-        Account account = app.accounts().deposit(user, accountNumber, amount);
-        context.out.printf("Account %d balance € %,.2f.\n", account.getNumber(), account.getBalance());
+        OwnedAccount ownedAccount = app.accounts().deposit(user, accountNumber, amount);
+        context.out.printf("Account %d balance € %,.2f.\n", ownedAccount.getNumber(), ownedAccount.getBalance());
     }
 }
