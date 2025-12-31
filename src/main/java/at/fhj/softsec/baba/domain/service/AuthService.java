@@ -14,7 +14,7 @@ public class AuthService {
         this.userRepository = userRepository;
     }
 
-    public void register(String userId, char[] password) {
+    public User register(String userId, char[] password) {
 
         validateUserId(userId);
         Objects.requireNonNull(password);
@@ -26,7 +26,7 @@ public class AuthService {
         String passwordHash = CryptoUtils.hash(password);
 
         User user = new User(userId, passwordHash);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     public AuthenticatedUser login(String userId, char[] password) {

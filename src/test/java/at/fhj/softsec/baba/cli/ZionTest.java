@@ -2,6 +2,7 @@ package at.fhj.softsec.baba.cli;
 
 import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.ApplicationBootstrap;
+import at.fhj.softsec.baba.domain.model.User;
 import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
 import at.fhj.softsec.baba.security.CryptoUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -118,8 +119,12 @@ public class ZionTest {
                                 .withSetup(app -> createAccount(app, "alice", "secret"))
                                 .withExpectedPrompt("alice@BaBa> Account 1 balance € -20,00.\nalice@BaBa> "),
                         ArgumentsBuilder.of("transfer 1 2 20.00", "exit")
-                                .withSetup(app -> login(app, "alice", "secret"))
-                                .withExpectedPrompt("alice@BaBa> Account 1 balance € 20,00.\nAccount 2 balance € 20,00.\nalice@BaBa> ")
+                                .withSetup(app -> {
+                                    createAccount(app, "alice", "secret");
+                                    User bob = app.auth().register("bob", "secret".toCharArray());
+                                    app.accounts().create(bob);
+                                })
+                                .withExpectedPrompt("alice@BaBa> Account 1 balance € -20,00.\nalice@BaBa> ")
                 )
                 .map(ArgumentsBuilder::build);
     }

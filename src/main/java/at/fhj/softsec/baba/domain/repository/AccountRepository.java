@@ -9,7 +9,9 @@ public interface AccountRepository {
 
     Collection<Account> retrieveAll(User user);
 
-    Account retrieveByNumber(User user, Long accountNumber);
+    Account retrieveByUserAndNumber(User user, Long accountNumber);
+
+    Account retrieveByNumber(Long accountNumber);
 
     Long getNextAccountNumber();
 

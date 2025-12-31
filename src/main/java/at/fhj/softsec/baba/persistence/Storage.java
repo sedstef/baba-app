@@ -38,8 +38,8 @@ public class Storage {
         }
     }
 
-    public Path baseDir(String item) {
-        return dataDir.resolve(item);
+    public Path dataDir() {
+        return dataDir;
     }
 
     public Path userDir() {
@@ -53,4 +53,9 @@ public class Storage {
     public Path accountsDir(String userId) {
         return userDir(userId).resolve("accounts");
     }
+
+    private Path baseDir(String item) {
+        return dataDir.resolve(item);
+    }
+
 }

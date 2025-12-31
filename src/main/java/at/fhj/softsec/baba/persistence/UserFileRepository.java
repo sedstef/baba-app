@@ -29,8 +29,9 @@ public class UserFileRepository implements UserRepository {
     }
 
     @Override
-    public void save(User user) {
+    public User save(User user) {
         storage.save(userFile(user.userId()), user);
+        return user;
     }
 
     private Path userFile(String userId) {
