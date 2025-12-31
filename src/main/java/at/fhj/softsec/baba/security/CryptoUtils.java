@@ -5,7 +5,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,9 +17,9 @@ import java.util.Base64;
 public final class CryptoUtils {
 
     private static final String ALGORITHM = "PBKDF2WithHmacSHA256";
-    private static final String CIPHER_ALGORITHM = "AES";
-    private static final int ITERATIONS = 200_000;
-    private static final int KEY_LENGTH = 256; // bits
+    static final String CIPHER_ALGORITHM = "AES";
+    static final int ITERATIONS = 200_000;
+    static final int KEY_LENGTH = 256; // bits
     private static final int SALT_LENGTH = 16; // bytes
 
     private static final String TRANSFORMATION = "AES/GCM/NoPadding";
@@ -30,12 +29,6 @@ public final class CryptoUtils {
 
     private CryptoUtils() {
         // utility class
-    }
-
-    public static SecretKey loadMasterKey(Path data, char[] masterPassword) throws GeneralSecurityException {
-        byte[] salt = loadOrCreateSalt(data.resolve("master.salt"));
-        byte[] keyBytes = pbkdf2(masterPassword, salt, ITERATIONS, KEY_LENGTH);
-        return new SecretKeySpec(keyBytes, CIPHER_ALGORITHM);
     }
 
     public static byte[] encrypt(byte[] plaintext, SecretKey secretKey) throws GeneralSecurityException {
@@ -120,29 +113,13 @@ public final class CryptoUtils {
         }
     }
 
-    private static byte[] loadOrCreateSalt(Path saltFile) {
-        try {
-            if (Files.exists(saltFile)) {
-                return Files.readAllBytes(saltFile);
-            }
-
-            Files.createDirectories(saltFile.getParent());
-
-            byte[] salt = generateSalt();
-            Files.write(saltFile, salt);
-            return salt;
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to load or create master salt", e);
-        }
-    }
-
-    private static byte[] generateSalt() {
+    static byte[] generateSalt() {
         byte[] salt = new byte[SALT_LENGTH];
         RANDOM.nextBytes(salt);
         return salt;
     }
 
-    private static byte[] pbkdf2(
+    static byte[] pbkdf2(
             char[] password,
             byte[] salt,
             int iterations,

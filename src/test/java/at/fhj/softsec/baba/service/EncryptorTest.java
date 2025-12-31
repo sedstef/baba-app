@@ -1,6 +1,7 @@
 package at.fhj.softsec.baba.service;
 
 import at.fhj.softsec.baba.security.CryptoUtils;
+import at.fhj.softsec.baba.security.MasterKeyLoader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -17,7 +18,7 @@ public class EncryptorTest {
     public void testDecryption(@TempDir Path tmpDir) throws Exception {
         //arrange
         byte[] plaintext = "This is a placeholder test.".getBytes(StandardCharsets.UTF_8);
-        SecretKey secretKey = CryptoUtils.loadMasterKey(tmpDir, "password".toCharArray());
+        SecretKey secretKey = MasterKeyLoader.loadMasterKey(tmpDir, "password".toCharArray());
 
         //act
         byte[] encrypted = CryptoUtils.encrypt(plaintext, secretKey);
