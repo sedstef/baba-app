@@ -1,13 +1,13 @@
 package at.fhj.softsec.baba.persistence;
 
-import at.fhj.softsec.baba.security.CryptoUtils;
+import at.fhj.softsec.baba.exception.StorageAccessException;
+import at.fhj.softsec.baba.security.StorageEncryptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.GeneralSecurityException;
 
 public class Storage {
 
@@ -21,10 +21,10 @@ public class Storage {
 
     public <T> T load(Path path, Class<T> type) {
         try {
-            byte[] bytes = CryptoUtils.decrypt(Files.readAllBytes(path), secretKey);
+            byte[] bytes = StorageEncryptor.decrypt(secretKey, path);
             return new ObjectMapper().readValue(bytes, type);
-        } catch (GeneralSecurityException | IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new StorageAccessException(e);
         }
     }
 
@@ -32,18 +32,19 @@ public class Storage {
         try {
             Files.createDirectories(path.getParent());
             byte[] bytes = new ObjectMapper().writeValueAsBytes(object);
-            Files.write(path, CryptoUtils.encrypt(bytes, secretKey));
-        } catch (GeneralSecurityException | IOException e) {
-            throw new RuntimeException(e);
+            StorageEncryptor.encrypt(secretKey, path, bytes);
+        } catch (IOException e) {
+            throw new StorageAccessException(e);
         }
     }
+
 
     public Path dataDir() {
         return dataDir;
     }
 
     public Path userDir() {
-        return baseDir("users");
+        return dataDir.resolve("users");
     }
 
     public Path userDir(String userId) {
@@ -52,10 +53,6 @@ public class Storage {
 
     public Path accountsDir(String userId) {
         return userDir(userId).resolve("accounts");
-    }
-
-    private Path baseDir(String item) {
-        return dataDir.resolve(item);
     }
 
 }

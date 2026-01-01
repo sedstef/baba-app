@@ -5,9 +5,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
@@ -22,41 +19,11 @@ public final class CryptoUtils {
     static final int KEY_LENGTH = 256; // bits
     private static final int SALT_LENGTH = 16; // bytes
 
-    private static final String TRANSFORMATION = "AES/GCM/NoPadding";
-    private static final int IV_LENGTH = 12;
-
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private CryptoUtils() {
         // utility class
     }
-
-    public static byte[] encrypt(byte[] plaintext, SecretKey secretKey) throws GeneralSecurityException {
-        byte[] salt = generateSalt();
-
-        byte[] iv = new byte[IV_LENGTH];
-        RANDOM.nextBytes(iv);
-
-        byte[] ciphertext = getCipher(Cipher.ENCRYPT_MODE, secretKey, iv)
-                .doFinal(plaintext);
-
-        // Write salt + iv + ciphertext
-        byte[] encrypted = new byte[salt.length + iv.length + ciphertext.length];
-        System.arraycopy(salt, 0, encrypted, 0, salt.length);
-        System.arraycopy(iv, 0, encrypted, salt.length, iv.length);
-        System.arraycopy(ciphertext, 0, encrypted, salt.length + iv.length, ciphertext.length);
-
-        return encrypted;
-    }
-
-    public static byte[] decrypt(byte[] encrypted, SecretKey secretKey) throws GeneralSecurityException {
-        byte[] iv = Arrays.copyOfRange(encrypted, 16, 28);
-        byte[] ciphertext = Arrays.copyOfRange(encrypted, 28, encrypted.length);
-
-        return getCipher(Cipher.DECRYPT_MODE, secretKey, iv)
-                .doFinal(ciphertext);
-    }
-
 
     /**
      * Hashes a password for storage.
@@ -135,12 +102,5 @@ public final class CryptoUtils {
                 .generateSecret(spec).getEncoded();
     }
 
-    private static Cipher getCipher(int encryptMode, SecretKey secretKey, byte[] iv) throws GeneralSecurityException {
-        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
-        cipher.init(
-                encryptMode,
-                secretKey,
-                new GCMParameterSpec(128, iv));
-        return cipher;
-    }
+
 }

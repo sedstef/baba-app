@@ -1,5 +1,6 @@
 package at.fhj.softsec.baba.domain.service;
 
+import at.fhj.softsec.baba.exception.AuthenticationException;
 import at.fhj.softsec.baba.security.CryptoUtils;
 import at.fhj.softsec.baba.domain.model.User;
 import at.fhj.softsec.baba.domain.repository.UserRepository;
@@ -14,7 +15,7 @@ public class AuthService {
         this.userRepository = userRepository;
     }
 
-    public User register(String userId, char[] password) {
+    public User register(String userId, char[] password) throws AuthenticationException {
 
         validateUserId(userId);
         Objects.requireNonNull(password);
@@ -29,7 +30,7 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    public AuthenticatedUser login(String userId, char[] password) {
+    public AuthenticatedUser login(String userId, char[] password) throws AuthenticationException {
 
         Objects.requireNonNull(password);
 

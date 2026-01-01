@@ -4,6 +4,8 @@ import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.ApplicationBootstrap;
 import at.fhj.softsec.baba.domain.model.User;
 import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
+import at.fhj.softsec.baba.exception.ApplicationException;
+import at.fhj.softsec.baba.exception.AuthenticationException;
 import at.fhj.softsec.baba.security.MasterKeyLoader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,9 +73,9 @@ public class ZionTest {
 
     @ParameterizedTest
     @MethodSource("provideInputLines")
-    public void promptLoopParsesInput(Consumer<Application> setup, StringLineReader stringLineReader, String expectedPrompt, @TempDir File tmpDir) throws Exception {
+    public void promptLoopParsesInput(SetUp setup, StringLineReader stringLineReader, String expectedPrompt, @TempDir File tmpDir) throws Exception {
         // arrange
-        if (setup != null) setup.accept(app);
+        if (setup != null) setup.call(app);
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
@@ -129,12 +131,12 @@ public class ZionTest {
                 .map(ArgumentsBuilder::build);
     }
 
-    private static void createAccount(Application app, String userId, String password) {
+    private static void createAccount(Application app, String userId, String password) throws AuthenticationException {
         AuthenticatedUser user = login(app, userId, password);
         app.account().create(user);
     }
 
-    private static AuthenticatedUser login(Application app, String userId, String password) {
+    private static AuthenticatedUser login(Application app, String userId, String password) throws AuthenticationException {
         app.auth().register(userId, password.toCharArray());
         AuthenticatedUser authenticatedUser = app.auth().login(userId, password.toCharArray());
         app.session().login(authenticatedUser);
@@ -146,7 +148,7 @@ public class ZionTest {
             return new ArgumentsBuilder().withCommands(command, commands);
         }
 
-        private Consumer<Application> setup;
+        private SetUp setup;
         private StringLineReader stringLineReader;
         private String expectedPrompt;
 
@@ -155,7 +157,7 @@ public class ZionTest {
             return this;
         }
 
-        public ArgumentsBuilder withSetup(Consumer<Application> setup) {
+        public ArgumentsBuilder withSetup(SetUp setup) {
             this.setup = setup;
             return this;
         }
@@ -170,4 +172,7 @@ public class ZionTest {
         }
     }
 
+    public interface SetUp {
+        void call(Application app) throws ApplicationException;
+    }
 }

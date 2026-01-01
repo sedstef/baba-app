@@ -4,6 +4,7 @@ import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.cli.CliContext;
 import at.fhj.softsec.baba.cli.Command;
 import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
+import at.fhj.softsec.baba.exception.ApplicationException;
 import at.fhj.softsec.baba.exception.InputParseException;
 
 import java.util.Arrays;
@@ -28,7 +29,7 @@ public class LoginCommand implements Command {
     }
 
     @Override
-    public void execute(String[] args, Application app, CliContext ctx) throws InputParseException {
+    public void execute(String[] args, Application app, CliContext ctx) throws ApplicationException {
         String username = parseAlphanum(args[0]);
         char[] pw = ctx.promptPassword("Password: ");
 
