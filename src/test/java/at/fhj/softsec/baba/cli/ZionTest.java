@@ -57,7 +57,7 @@ public class ZionTest {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
 
-        BufferedReader reader = CommandReader.of("help", "exit");
+        BufferedReader reader = StringLineReader.of("help", "exit");
         Zion zion = new Zion(app, new CliContext(reader, out));
 
         // act
@@ -71,14 +71,14 @@ public class ZionTest {
 
     @ParameterizedTest
     @MethodSource("provideInputLines")
-    public void promptLoopParsesInput(Consumer<Application> setup, CommandReader commandReader, String expectedPrompt, @TempDir File tmpDir) throws Exception {
+    public void promptLoopParsesInput(Consumer<Application> setup, StringLineReader stringLineReader, String expectedPrompt, @TempDir File tmpDir) throws Exception {
         // arrange
         if (setup != null) setup.accept(app);
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintWriter out = new PrintWriter(baos, true, StandardCharsets.UTF_8);
 
-        Zion zion = new Zion(app, new CliContext(commandReader, out));
+        Zion zion = new Zion(app, new CliContext(stringLineReader, out));
 
         // act
         zion.promptLoop();
@@ -147,11 +147,11 @@ public class ZionTest {
         }
 
         private Consumer<Application> setup;
-        private CommandReader commandReader;
+        private StringLineReader stringLineReader;
         private String expectedPrompt;
 
         public ArgumentsBuilder withCommands(String command, String... commands) {
-            this.commandReader = CommandReader.of(command, commands);
+            this.stringLineReader = StringLineReader.of(command, commands);
             return this;
         }
 
@@ -166,7 +166,7 @@ public class ZionTest {
         }
 
         public Arguments build() {
-            return Arguments.of(setup, commandReader, expectedPrompt);
+            return Arguments.of(setup, stringLineReader, expectedPrompt);
         }
     }
 

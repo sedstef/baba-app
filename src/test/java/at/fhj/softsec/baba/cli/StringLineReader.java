@@ -6,16 +6,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-class CommandReader extends BufferedReader {
-    public static CommandReader of(String command, String... commands) {
+class StringLineReader extends BufferedReader {
+    public static StringLineReader of(String command, String... commands) {
         List<String> inputs = new ArrayList<>(List.of(command));
         if (null != commands) {
             inputs.addAll(List.of(commands));
         }
-        return new CommandReader(inputs);
+        return new StringLineReader(inputs);
     }
 
-    private CommandReader(Collection<String> commands) {
+    private StringLineReader(Collection<String> commands) {
         super(new StringReader(String.join("\n", commands)));
     }
 }
