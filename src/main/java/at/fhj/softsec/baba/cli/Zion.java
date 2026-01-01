@@ -3,10 +3,6 @@ package at.fhj.softsec.baba.cli;
 import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.cli.commands.*;
 import at.fhj.softsec.baba.exception.ApplicationException;
-import at.fhj.softsec.baba.exception.InputParseException;
-import at.fhj.softsec.baba.exception.NotAuthenticatedException;
-
-import java.io.PrintWriter;
 
 public class Zion {
     private final Application app;
