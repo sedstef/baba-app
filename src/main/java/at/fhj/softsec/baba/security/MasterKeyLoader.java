@@ -39,6 +39,7 @@ public class MasterKeyLoader {
                 Base64.getEncoder().encodeToString(salt) + ":" +
                 Base64.getEncoder().encodeToString(keyBytes);
 
+        Files.createDirectories(file.getParent());
         Files.writeString(file, record);
         return keyBytes;
     }

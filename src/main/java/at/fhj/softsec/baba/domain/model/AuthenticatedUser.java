@@ -11,4 +11,9 @@ public final class AuthenticatedUser {
     public String getUserId() {
         return userId;
     }
+
+    @Override
+    public String toString() {
+        return userId;
+    }
 }
