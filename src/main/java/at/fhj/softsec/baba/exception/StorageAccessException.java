@@ -1,6 +1,6 @@
 package at.fhj.softsec.baba.exception;
 
-public class StorageAccessException extends Exception {
+public class StorageAccessException extends ApplicationException {
 
     public StorageAccessException(String message) {
         super(message);

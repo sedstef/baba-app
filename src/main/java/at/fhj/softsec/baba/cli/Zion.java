@@ -2,7 +2,11 @@ package at.fhj.softsec.baba.cli;
 
 import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.cli.commands.*;
+import at.fhj.softsec.baba.exception.ApplicationException;
 import at.fhj.softsec.baba.exception.InputParseException;
+import at.fhj.softsec.baba.exception.NotAuthenticatedException;
+
+import java.io.PrintWriter;
 
 public class Zion {
     private final Application app;
@@ -29,7 +33,7 @@ public class Zion {
             public void execute(String[] args, Application app, CliContext context) {
                 if (args.length > 0) {
                     registry.findCommand(args).ifPresentOrElse(
-                            command -> context.out.printf("Usage: \n%s\n%n", command.getUsage()),
+                            command -> printUsage(command),
                             Zion.this::printGlobalHelp
                     );
                 } else {
@@ -49,6 +53,7 @@ public class Zion {
         registry.register(new TransferCommand());
     }
 
+
     public void promptLoop() {
         do {
             String prompt = app.session().getCurrentUser()
@@ -66,9 +71,9 @@ public class Zion {
                                 System.arraycopy(args, command.name().length, remainingArgs, 0, remainingArgs.length);
                                 try {
                                     command.execute(remainingArgs, app, context);
-                                } catch (InputParseException e) {
+                                } catch (ApplicationException e) {
                                     context.out.println(e.getMessage());
-                                    context.out.println(command.getUsage());
+                                    printUsage(command);
                                 }
                             },
                             this::printGlobalHelp
@@ -81,6 +86,10 @@ public class Zion {
         registry.getAllCommands().forEach(cmd ->
                 context.out.printf("  %-15s %s%n", cmd.toName(), cmd.description())
         );
+    }
+
+    private void printUsage(Command command) {
+        context.out.printf("Usage: \n%s\n%n", command.getUsage());
     }
 
 }

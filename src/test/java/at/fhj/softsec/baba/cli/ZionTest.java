@@ -91,7 +91,7 @@ public class ZionTest {
     private static Stream<Arguments> provideInputLines() {
         return Stream.of(
                         ArgumentsBuilder.of("help help", "exit")
-                                .withExpectedPrompt("BaBa> help - Show help information\nBaBa> "),
+                                .withExpectedPrompt("BaBa> Usage: \nhelp \n\nBaBa> "),
                         ArgumentsBuilder.of("register alice", "secret", "secret", "exit")
                                 .withExpectedPrompt("BaBa> Password: Verify password: alice@BaBa> "),
                         ArgumentsBuilder.of("login alice", "secret", "exit")

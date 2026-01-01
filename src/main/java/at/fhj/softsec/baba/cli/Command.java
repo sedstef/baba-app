@@ -1,6 +1,7 @@
 package at.fhj.softsec.baba.cli;
 
 import at.fhj.softsec.baba.Application;
+import at.fhj.softsec.baba.exception.ApplicationException;
 import at.fhj.softsec.baba.exception.InputParseException;
 
 import java.util.Arrays;
@@ -28,6 +29,6 @@ public interface Command {
         return format("%s %s", toName(), usage());
     }
 
-    void execute(String[] args, Application app, CliContext context) throws InputParseException;
+    void execute(String[] args, Application app, CliContext context) throws ApplicationException;
 
 }
