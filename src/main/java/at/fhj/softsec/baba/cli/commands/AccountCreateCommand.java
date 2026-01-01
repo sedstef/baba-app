@@ -6,12 +6,10 @@ import at.fhj.softsec.baba.cli.CliContext;
 import at.fhj.softsec.baba.domain.model.OwnedAccount;
 import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
 
-import java.io.IOException;
-
 public class AccountCreateCommand extends AuthenticatedCommand {
     @Override
-    public String name() {
-        return "create";
+    public String[] name() {
+        return new String[]{"account", "create"};
     }
 
     @Override
@@ -20,7 +18,7 @@ public class AccountCreateCommand extends AuthenticatedCommand {
     }
 
     @Override
-    protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user)  {
+    protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) {
         OwnedAccount ownedAccount = app.account().create(user);
 
         context.out.printf("Account %s created.\n", ownedAccount.getNumber());

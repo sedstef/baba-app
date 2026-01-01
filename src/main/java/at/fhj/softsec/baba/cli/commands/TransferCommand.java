@@ -14,13 +14,18 @@ import static at.fhj.softsec.baba.cli.InputParser.parseLong;
 
 public class TransferCommand extends AuthenticatedCommand {
     @Override
-    public String name() {
-        return "transfer";
+    public String[] name() {
+        return new String[]{"transfer"};
     }
 
     @Override
     public String description() {
         return "Transfer money from an account into another account";
+    }
+
+    @Override
+    public String usage() {
+        return "<source account number> <target account number> <amount>";
     }
 
     @Override
@@ -31,6 +36,6 @@ public class TransferCommand extends AuthenticatedCommand {
 
         OwnedAccount ownedAccount = app.transfer().transfer(user, sourceAccount, targetAccount, amount);
 
-        context.out.printf("Account %d balance € %,.2f.\n" , ownedAccount.getNumber(), ownedAccount.getBalance());
+        context.out.printf("Account %d balance € %,.2f.\n", ownedAccount.getNumber(), ownedAccount.getBalance());
     }
 }

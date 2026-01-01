@@ -7,7 +7,6 @@ import at.fhj.softsec.baba.domain.model.OwnedAccount;
 import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
 import at.fhj.softsec.baba.exception.InputParseException;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 
 import static at.fhj.softsec.baba.cli.InputParser.parseBigDecimal;
@@ -15,13 +14,18 @@ import static at.fhj.softsec.baba.cli.InputParser.parseLong;
 
 public class WithdrawalCommand extends AuthenticatedCommand {
     @Override
-    public String name() {
-        return "withdrawal";
+    public String[] name() {
+        return new String[]{"withdrawal"};
     }
 
     @Override
     public String description() {
         return "Withdrawal money from an account";
+    }
+
+    @Override
+    public String usage() {
+        return "<account number> <amount>";
     }
 
     @Override

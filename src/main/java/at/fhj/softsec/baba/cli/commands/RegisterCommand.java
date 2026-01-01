@@ -5,19 +5,26 @@ import at.fhj.softsec.baba.cli.CliContext;
 import at.fhj.softsec.baba.cli.Command;
 import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
 import at.fhj.softsec.baba.exception.InputParseException;
+
 import java.util.Arrays;
+
 import static at.fhj.softsec.baba.cli.InputParser.parseAlphanum;
 
 public class RegisterCommand implements Command {
 
     @Override
-    public String name() {
-        return "register";
+    public String[] name() {
+        return new String[]{"register"};
     }
 
     @Override
     public String description() {
         return "Add a new user";
+    }
+
+    @Override
+    public String usage() {
+        return "<user name>";
     }
 
     @Override

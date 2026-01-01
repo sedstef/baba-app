@@ -6,7 +6,6 @@ import at.fhj.softsec.baba.cli.Command;
 import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
 import at.fhj.softsec.baba.exception.InputParseException;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 import static at.fhj.softsec.baba.cli.InputParser.parseAlphanum;
@@ -14,13 +13,18 @@ import static at.fhj.softsec.baba.cli.InputParser.parseAlphanum;
 public class LoginCommand implements Command {
 
     @Override
-    public String name() {
-        return "login";
+    public String[] name() {
+        return new String[]{"login"};
     }
 
     @Override
     public String description() {
         return "Login a already registered user";
+    }
+
+    @Override
+    public String usage() {
+        return "<user name>";
     }
 
     @Override

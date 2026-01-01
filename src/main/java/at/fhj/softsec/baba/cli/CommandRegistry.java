@@ -1,54 +1,55 @@
 package at.fhj.softsec.baba.cli;
 
-import at.fhj.softsec.baba.Application;
-import at.fhj.softsec.baba.exception.InputParseException;
-
-import java.io.IOException;
 import java.util.*;
 
-public class CommandRegistry implements Command {
+public class CommandRegistry {
 
-    private final String name;
-    private final Map<String, Command> commands = new HashMap<>();
-
-    public CommandRegistry(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String name() {
-        return name;
-    }
-
-    @Override
-    public String description() {
-        return "Registry of commands";
-    }
+    private final Map<StringArrayKey, Command> commands = new LinkedHashMap<>();
 
     public void register(Command command) {
-        commands.put(command.name(), command);
+        commands.put(new StringArrayKey(command.name()), command);
     }
 
-    public CommandRegistry sub(String main) {
-        return (CommandRegistry) commands.computeIfAbsent(main, CommandRegistry::new);
-    }
+    public Optional<Command> findCommand(String[] args) {
+        List<String> key = new ArrayList<>();
 
-    public void visitCommands(CommandVisitor visitor) {
-        for (Command command : commands.values()) {
-            visitor.visit(command);
-            if (command instanceof CommandRegistry registry) {
-                registry.visitCommands(visitor);
+        for (String arg : args) {
+            key.add(arg);
+            Command command = commands.get(new StringArrayKey(key.toArray(new String[0])));
+            if (command != null) {
+                return Optional.of(command);
             }
         }
+        return Optional.empty();
     }
 
-    public void execute(String[] tokens, Application app, CliContext ctx) throws InputParseException {
-        Command command = commands.get(tokens[0]);
-        if (command != null) {
-            command.execute(Arrays.copyOfRange(tokens, 1, tokens.length), app, ctx);
-        } else {
-            ctx.out.println("Unknown command: " + tokens[0]);
+
+    public Collection<Command> getAllCommands() {
+        return commands.values();
+    }
+
+    private class StringArrayKey implements Comparable<StringArrayKey> {
+
+        private final String[] value;
+
+        public StringArrayKey(String[] value) {
+            this.value = value.clone(); // defensive copy
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return o instanceof StringArrayKey other &&
+                    Arrays.equals(value, other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(value);
+        }
+
+        @Override
+        public int compareTo(StringArrayKey stringArrayKey) {
+            return Arrays.compare(value, stringArrayKey.value);
         }
     }
-
 }

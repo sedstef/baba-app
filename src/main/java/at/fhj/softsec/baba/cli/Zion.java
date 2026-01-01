@@ -4,23 +4,20 @@ import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.cli.commands.*;
 import at.fhj.softsec.baba.exception.InputParseException;
 
-import java.io.IOException;
-import java.util.Optional;
-
 public class Zion {
     private final Application app;
     private final CliContext context;
-    private final CommandRegistry root;
+    private final CommandRegistry registry;
 
     public Zion(Application app, CliContext cliContext) {
         this.app = app;
         this.context = cliContext;
 
-        root = new CommandRegistry("root");
-        root.register(new Command() {
+        registry = new CommandRegistry();
+        registry.register(new Command() {
             @Override
-            public String name() {
-                return "help";
+            public String[] name() {
+                return new String[]{"help"};
             }
 
             @Override
@@ -31,50 +28,59 @@ public class Zion {
             @Override
             public void execute(String[] args, Application app, CliContext context) {
                 if (args.length > 0) {
-                    String cmdName = args[0];
-                    root.visitCommands(cmd -> {
-                                if (cmd.name().equals(cmdName)) {
-                                    context.out.printf("%s - %s%n", cmd.name(), cmd.description());
-                                }
-                            }
+                    registry.findCommand(args).ifPresentOrElse(
+                            command -> context.out.printf("Usage: \n%s\n%n", command.getUsage()),
+                            Zion.this::printGlobalHelp
                     );
                 } else {
-                    context.out.println("Available commands: ");
-                    root.visitCommands(cmd ->
-                            context.out.printf("%-10s - %s%n", cmd.name(), cmd.description())
-                    );
+                    printGlobalHelp();
                 }
             }
         });
-        root.register(new RegisterCommand());
-        root.register(new LoginCommand());
-        root.register(new LogoutCommand());
-        root.sub("account").register(new AccountListCommand());
-        root.sub("account").register(new AccountCreateCommand());
-        root.sub("account").register(new AccountShowCommand());
-        root.sub("account").register(new AccountDeleteCommand());
-        root.register(new DepositCommand());
-        root.register(new WithdrawalCommand());
-        root.register(new TransferCommand());
+        registry.register(new RegisterCommand());
+        registry.register(new LoginCommand());
+        registry.register(new LogoutCommand());
+        registry.register(new AccountListCommand());
+        registry.register(new AccountCreateCommand());
+        registry.register(new AccountShowCommand());
+        registry.register(new AccountDeleteCommand());
+        registry.register(new DepositCommand());
+        registry.register(new WithdrawalCommand());
+        registry.register(new TransferCommand());
     }
 
     public void promptLoop() {
         do {
-            try {
-                String prompt = app.session().getCurrentUser()
-                        .map(user -> user.getUserId() + "@BaBa> ")
-                        .orElse("BaBa> ");
-                String line = context.prompt(prompt);
-                if (line == null || line.equals("exit")) break;
+            String prompt = app.session().getCurrentUser()
+                    .map(user -> user.getUserId() + "@BaBa> ")
+                    .orElse("BaBa> ");
+            String line = context.prompt(prompt);
+            if (line == null || line.equals("exit")) break;
 
-                String[] tokens = line.trim().split("\\s+");
-                if (tokens.length == 0) continue;
-                root.execute(tokens, app, context);
-            } catch (InputParseException e) {
-                context.out.println(e.getMessage());
-            }
+            String[] args = line.trim().split("\\s+");
+            if (args.length == 0) continue;
+
+            registry.findCommand(args)
+                    .ifPresentOrElse(command -> {
+                                String[] remainingArgs = new String[args.length - command.name().length];
+                                System.arraycopy(args, command.name().length, remainingArgs, 0, remainingArgs.length);
+                                try {
+                                    command.execute(remainingArgs, app, context);
+                                } catch (InputParseException e) {
+                                    context.out.println(e.getMessage());
+                                    context.out.println(command.getUsage());
+                                }
+                            },
+                            this::printGlobalHelp
+                    );
         } while (true);
     }
 
+    private void printGlobalHelp() {
+        context.out.println("Available commands:");
+        registry.getAllCommands().forEach(cmd ->
+                context.out.printf("  %-15s %s%n", cmd.toName(), cmd.description())
+        );
+    }
 
 }

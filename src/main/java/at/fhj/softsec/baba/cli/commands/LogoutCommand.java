@@ -4,13 +4,11 @@ import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.cli.CliContext;
 import at.fhj.softsec.baba.cli.Command;
 
-import java.io.IOException;
-
 public class LogoutCommand implements Command {
 
     @Override
-    public String name() {
-        return "logout";
+    public String[] name() {
+        return new String[]{"logout"};
     }
 
     @Override

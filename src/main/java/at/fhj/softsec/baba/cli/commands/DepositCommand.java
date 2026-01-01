@@ -7,7 +7,6 @@ import at.fhj.softsec.baba.domain.model.OwnedAccount;
 import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
 import at.fhj.softsec.baba.exception.InputParseException;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 
 import static at.fhj.softsec.baba.cli.InputParser.parseBigDecimal;
@@ -15,8 +14,8 @@ import static java.lang.Long.parseLong;
 
 public class DepositCommand extends AuthenticatedCommand {
     @Override
-    public String name() {
-        return "deposit";
+    public String[] name() {
+        return new String[]{"deposit"};
     }
 
     @Override
@@ -24,6 +23,10 @@ public class DepositCommand extends AuthenticatedCommand {
         return "Deposit money into an account";
     }
 
+    @Override
+    public String usage() {
+        return "<account number> <amount>";
+    }
     @Override
     protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) throws InputParseException {
         Long accountNumber = parseLong(args[0]);

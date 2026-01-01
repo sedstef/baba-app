@@ -5,14 +5,14 @@ import at.fhj.softsec.baba.cli.AuthenticatedCommand;
 import at.fhj.softsec.baba.cli.CliContext;
 import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
 
-import java.io.IOException;
+import java.util.List;
 
 import static java.lang.String.format;
 
 public class AccountListCommand extends AuthenticatedCommand {
     @Override
-    public String name() {
-        return "list";
+    public String[] name() {
+        return new String[]{"account", "list"};
     }
 
     @Override
@@ -21,7 +21,7 @@ public class AccountListCommand extends AuthenticatedCommand {
     }
 
     @Override
-    protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user)  {
+    protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) {
 
         context.out.println("Account listing:");
         app.account().retrieveAccounts(user).stream()
