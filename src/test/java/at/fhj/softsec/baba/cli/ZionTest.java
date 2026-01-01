@@ -92,8 +92,8 @@ public class ZionTest {
         return Stream.of(
                         ArgumentsBuilder.of("help help", "exit")
                                 .withExpectedPrompt("BaBa> help - Show help information\nBaBa> "),
-                        ArgumentsBuilder.of("register", "alice", "secret", "secret", "exit")
-                                .withExpectedPrompt("BaBa> Username: Password: Verify password: alice@BaBa> "),
+                        ArgumentsBuilder.of("register alice", "secret", "secret", "exit")
+                                .withExpectedPrompt("BaBa> Password: Verify password: alice@BaBa> "),
                         ArgumentsBuilder.of("login alice", "secret", "exit")
                                 .withSetup(app -> app.auth().register("alice", "secret".toCharArray()))
                                 .withExpectedPrompt("BaBa> Password: Login successful.\nalice@BaBa> "),

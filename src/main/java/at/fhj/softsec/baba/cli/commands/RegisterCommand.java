@@ -22,10 +22,7 @@ public class RegisterCommand implements Command {
 
     @Override
     public void execute(String[] args, Application app, CliContext ctx)  {
-
-        //ctx.out.println("Creating new user (Ctrl+C to cancel)");
-
-        String username = ctx.prompt("Username: ");
+        String username = args[0];
 
         char[] pw1 = ctx.promptPassword("Password: ");
         char[] pw2 = ctx.promptPassword("Verify password: ");
