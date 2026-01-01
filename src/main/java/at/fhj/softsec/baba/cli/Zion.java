@@ -2,6 +2,7 @@ package at.fhj.softsec.baba.cli;
 
 import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.cli.commands.*;
+import at.fhj.softsec.baba.exception.InputParseException;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -59,15 +60,19 @@ public class Zion {
 
     public void promptLoop() {
         do {
-            String prompt = app.session().getCurrentUser()
-                    .map(user -> user.getUserId() + "@BaBa> ")
-                    .orElse("BaBa> ");
-            String line = context.prompt(prompt);
-            if (line == null || line.equals("exit")) break;
+            try {
+                String prompt = app.session().getCurrentUser()
+                        .map(user -> user.getUserId() + "@BaBa> ")
+                        .orElse("BaBa> ");
+                String line = context.prompt(prompt);
+                if (line == null || line.equals("exit")) break;
 
-            String[] tokens = line.trim().split("\\s+");
-            if (tokens.length == 0) continue;
-            root.execute(tokens, app, context);
+                String[] tokens = line.trim().split("\\s+");
+                if (tokens.length == 0) continue;
+                root.execute(tokens, app, context);
+            } catch (InputParseException e) {
+                context.out.println(e.getMessage());
+            }
         } while (true);
     }
 

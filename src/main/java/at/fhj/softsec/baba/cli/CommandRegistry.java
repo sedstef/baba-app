@@ -1,6 +1,7 @@
 package at.fhj.softsec.baba.cli;
 
 import at.fhj.softsec.baba.Application;
+import at.fhj.softsec.baba.exception.InputParseException;
 
 import java.io.IOException;
 import java.util.*;
@@ -41,7 +42,7 @@ public class CommandRegistry implements Command {
         }
     }
 
-    public void execute(String[] tokens, Application app, CliContext ctx)  {
+    public void execute(String[] tokens, Application app, CliContext ctx) throws InputParseException {
         Command command = commands.get(tokens[0]);
         if (command != null) {
             command.execute(Arrays.copyOfRange(tokens, 1, tokens.length), app, ctx);

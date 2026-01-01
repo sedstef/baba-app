@@ -8,6 +8,8 @@ import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
 
 import java.io.IOException;
 
+import static java.lang.Long.parseLong;
+
 public class AccountShowCommand extends AuthenticatedCommand {
     @Override
     public String name() {
@@ -21,7 +23,7 @@ public class AccountShowCommand extends AuthenticatedCommand {
 
     @Override
     protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user)  {
-        Long accountNumber = Long.valueOf(args[0]);
+        Long accountNumber = parseLong(args[0]);
 
         OwnedAccount ownedAccount = app.account().retrieveAccount(user, accountNumber);
         context.out.printf("Account %d balance € %,.2f\n" , ownedAccount.getNumber(), ownedAccount.getBalance());

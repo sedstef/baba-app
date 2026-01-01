@@ -4,9 +4,9 @@ import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.cli.CliContext;
 import at.fhj.softsec.baba.cli.Command;
 import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
-
-import java.io.IOException;
+import at.fhj.softsec.baba.exception.InputParseException;
 import java.util.Arrays;
+import static at.fhj.softsec.baba.cli.InputParser.parseAlphanum;
 
 public class RegisterCommand implements Command {
 
@@ -21,8 +21,8 @@ public class RegisterCommand implements Command {
     }
 
     @Override
-    public void execute(String[] args, Application app, CliContext ctx)  {
-        String username = args[0];
+    public void execute(String[] args, Application app, CliContext ctx) throws InputParseException {
+        String username = parseAlphanum(args[0]);
 
         char[] pw1 = ctx.promptPassword("Password: ");
         char[] pw2 = ctx.promptPassword("Verify password: ");
@@ -43,4 +43,5 @@ public class RegisterCommand implements Command {
 
         //ctx.out.println("User '" + username + "' created.");
     }
+
 }
