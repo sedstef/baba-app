@@ -1,24 +1,15 @@
 package at.fhj.softsec.baba.domain.service;
 
+import at.fhj.softsec.baba.domain.model.AuthenticatedUser;
+
 import java.util.Optional;
 
-public class Session {
+public interface Session {
+    Optional<AuthenticatedUser> getCurrentUser();
 
-    private AuthenticatedUser currentUser;
+    void login(AuthenticatedUser user);
 
-    public Optional<AuthenticatedUser> getCurrentUser() {
-        return Optional.ofNullable(currentUser);
-    }
+    void logout();
 
-    public void login(AuthenticatedUser user) {
-        this.currentUser = user;
-    }
-
-    public void logout() {
-        this.currentUser = null;
-    }
-
-    public boolean isAuthenticated() {
-        return currentUser != null;
-    }
+    boolean isAuthenticated();
 }

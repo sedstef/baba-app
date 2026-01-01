@@ -1,12 +1,10 @@
 package at.fhj.softsec.baba.cli;
 
 import at.fhj.softsec.baba.Application;
-import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
+import at.fhj.softsec.baba.domain.model.AuthenticatedUser;
 import at.fhj.softsec.baba.exception.ApplicationException;
 import at.fhj.softsec.baba.exception.InputParseException;
 import at.fhj.softsec.baba.exception.NotAuthenticatedException;
-
-import java.io.IOException;
 
 public abstract class AuthenticatedCommand implements Command {
 

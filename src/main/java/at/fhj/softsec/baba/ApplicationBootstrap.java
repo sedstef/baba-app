@@ -1,9 +1,6 @@
 package at.fhj.softsec.baba;
 
-import at.fhj.softsec.baba.domain.service.AccountService;
-import at.fhj.softsec.baba.domain.service.AuthService;
-import at.fhj.softsec.baba.domain.service.Session;
-import at.fhj.softsec.baba.domain.service.TransferService;
+import at.fhj.softsec.baba.domain.service.*;
 import at.fhj.softsec.baba.persistence.AccountFileRepository;
 import at.fhj.softsec.baba.persistence.Storage;
 import at.fhj.softsec.baba.persistence.UserFileRepository;
@@ -14,17 +11,17 @@ import java.nio.file.Path;
 public class ApplicationBootstrap {
 
     public static Application create(Path dataDir, SecretKey secretKey) {
-        final Session session = new Session();
+        final Session session = new SessionImpl();
 
         Storage storage = new Storage(dataDir, secretKey);
 
-        final AuthService authService = new AuthService(new UserFileRepository(storage));
-        final AccountService accountService = new AccountService(
+        final AuthService authService = new AuthServiceImpl(new UserFileRepository(storage));
+        final AccountService accountService = new AccountServiceImpl(
                 new AccountFileRepository(storage),
                 new UserFileRepository(storage)
         );
 
-        final TransferService transferService = new TransferService(
+        final TransferService transferService = new TransferServiceImpl(
                 new AccountFileRepository(storage),
                 new UserFileRepository(storage)
         );

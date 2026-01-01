@@ -4,7 +4,7 @@ import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.cli.AuthenticatedCommand;
 import at.fhj.softsec.baba.cli.CliContext;
 import at.fhj.softsec.baba.domain.model.OwnedAccount;
-import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
+import at.fhj.softsec.baba.domain.model.AuthenticatedUser;
 import at.fhj.softsec.baba.exception.InputParseException;
 
 import java.math.BigDecimal;

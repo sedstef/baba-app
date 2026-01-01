@@ -3,7 +3,7 @@ package at.fhj.softsec.baba.cli.commands;
 import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.cli.AuthenticatedCommand;
 import at.fhj.softsec.baba.cli.CliContext;
-import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
+import at.fhj.softsec.baba.domain.model.AuthenticatedUser;
 
 import static java.lang.Long.parseLong;
 

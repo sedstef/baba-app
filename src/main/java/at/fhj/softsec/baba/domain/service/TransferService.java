@@ -1,54 +1,14 @@
 package at.fhj.softsec.baba.domain.service;
 
-import at.fhj.softsec.baba.domain.model.ForeignAccount;
+import at.fhj.softsec.baba.domain.model.AuthenticatedUser;
 import at.fhj.softsec.baba.domain.model.OwnedAccount;
-import at.fhj.softsec.baba.domain.model.User;
-import at.fhj.softsec.baba.domain.repository.AccountRepository;
-import at.fhj.softsec.baba.domain.repository.UserRepository;
 
 import java.math.BigDecimal;
 
-public class TransferService {
+public interface TransferService {
+    OwnedAccount deposit(AuthenticatedUser authenticatedUser, Long accountNumber, BigDecimal amount);
 
-    private final AccountRepository repository;
-    private final UserRepository userRepository;
+    OwnedAccount withdrawal(AuthenticatedUser authenticatedUser, Long accountNumber, BigDecimal amount);
 
-    public TransferService(AccountRepository repository, UserRepository userRepository) {
-        this.repository = repository;
-        this.userRepository = userRepository;
-    }
-
-    public OwnedAccount deposit(AuthenticatedUser authenticatedUser, Long accountNumber, BigDecimal amount) {
-        User user = userRepository.findById(authenticatedUser.getUserId())
-                .orElseThrow();
-
-        OwnedAccount ownedAccount = repository.retrieveByUserAndNumber(user, accountNumber);
-        ownedAccount.deposit(amount);
-        return repository.save(ownedAccount);
-    }
-
-    public OwnedAccount withdrawal(AuthenticatedUser authenticatedUser, Long accountNumber, BigDecimal amount) {
-        User user = userRepository.findById(authenticatedUser.getUserId())
-                .orElseThrow();
-
-        OwnedAccount ownedAccount = repository.retrieveByUserAndNumber(user, accountNumber);
-        ownedAccount.withdraw(amount);
-        return repository.save(ownedAccount);
-    }
-
-    public OwnedAccount transfer(AuthenticatedUser authenticatedUser, Long sourceNumber, Long targetNumber, BigDecimal amount) {
-        User user = userRepository.findById(authenticatedUser.getUserId())
-                .orElseThrow();
-
-        OwnedAccount sourceAccount = repository.retrieveByUserAndNumber(user, sourceNumber);
-        ForeignAccount targetAccount = repository.retrieveByNumber(targetNumber);
-
-        sourceAccount.transferOut(targetAccount, amount);
-        targetAccount.transferIn(sourceAccount, amount);
-
-        repository.save(sourceAccount);
-        repository.save(targetAccount);
-
-        return sourceAccount;
-    }
+    OwnedAccount transfer(AuthenticatedUser authenticatedUser, Long sourceNumber, Long targetNumber, BigDecimal amount);
 }

@@ -3,7 +3,7 @@ package at.fhj.softsec.baba.cli;
 import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.ApplicationBootstrap;
 import at.fhj.softsec.baba.domain.model.User;
-import at.fhj.softsec.baba.domain.service.AuthenticatedUser;
+import at.fhj.softsec.baba.domain.model.AuthenticatedUser;
 import at.fhj.softsec.baba.exception.ApplicationException;
 import at.fhj.softsec.baba.exception.AuthenticationException;
 import at.fhj.softsec.baba.security.MasterKeyLoader;
@@ -19,7 +19,6 @@ import javax.crypto.SecretKey;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.*;

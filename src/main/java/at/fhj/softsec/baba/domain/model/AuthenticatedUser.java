@@ -1,4 +1,4 @@
-package at.fhj.softsec.baba.domain.service;
+package at.fhj.softsec.baba.domain.model;
 
 public final class AuthenticatedUser {
 
