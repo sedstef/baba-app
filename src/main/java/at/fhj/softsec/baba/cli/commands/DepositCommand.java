@@ -3,6 +3,7 @@ package at.fhj.softsec.baba.cli.commands;
 import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.cli.AuthenticatedCommand;
 import at.fhj.softsec.baba.cli.CliContext;
+import at.fhj.softsec.baba.cli.Options;
 import at.fhj.softsec.baba.domain.model.OwnedAccount;
 import at.fhj.softsec.baba.domain.model.AuthenticatedUser;
 import at.fhj.softsec.baba.exception.InputParseException;
@@ -13,6 +14,11 @@ import static at.fhj.softsec.baba.cli.InputParser.parseBigDecimal;
 import static java.lang.Long.parseLong;
 
 public class DepositCommand extends AuthenticatedCommand {
+    private final Options options = Options.builder()
+            .withLong("account number")
+            .withBigDecimal("amount")
+            .build();
+
     @Override
     public String[] name() {
         return new String[]{"deposit"};
@@ -25,12 +31,14 @@ public class DepositCommand extends AuthenticatedCommand {
 
     @Override
     public String usage() {
-        return "<account number> <amount>";
+        return options.getUsage();
     }
+
     @Override
     protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) throws InputParseException {
-        Long accountNumber = parseLong(args[0]);
-        BigDecimal amount = parseBigDecimal(args[1]);
+        options.parse(args);
+        Long accountNumber = options.getLong("account number");
+        BigDecimal amount = options.getBigDecimal("amount");
 
         OwnedAccount ownedAccount = app.transfer().deposit(user, accountNumber, amount);
         context.out.printf("Account %d balance € %,.2f.\n", ownedAccount.getNumber(), ownedAccount.getBalance());

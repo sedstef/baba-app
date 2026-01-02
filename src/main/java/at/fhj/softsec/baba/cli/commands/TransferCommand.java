@@ -3,6 +3,7 @@ package at.fhj.softsec.baba.cli.commands;
 import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.cli.AuthenticatedCommand;
 import at.fhj.softsec.baba.cli.CliContext;
+import at.fhj.softsec.baba.cli.Options;
 import at.fhj.softsec.baba.domain.model.OwnedAccount;
 import at.fhj.softsec.baba.domain.model.AuthenticatedUser;
 import at.fhj.softsec.baba.exception.InputParseException;
@@ -13,6 +14,12 @@ import static at.fhj.softsec.baba.cli.InputParser.parseBigDecimal;
 import static at.fhj.softsec.baba.cli.InputParser.parseLong;
 
 public class TransferCommand extends AuthenticatedCommand {
+    private final Options options = Options.builder()
+            .withLong("source account number")
+            .withLong("target account number")
+            .withBigDecimal("amount")
+            .build();
+
     @Override
     public String[] name() {
         return new String[]{"transfer"};
@@ -25,14 +32,15 @@ public class TransferCommand extends AuthenticatedCommand {
 
     @Override
     public String usage() {
-        return "<source account number> <target account number> <amount>";
+        return options.getUsage();
     }
 
     @Override
     protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) throws InputParseException {
-        Long sourceAccount = parseLong(args[0]);
-        Long targetAccount = parseLong(args[1]);
-        BigDecimal amount = parseBigDecimal(args[2]);
+        options.parse(args);
+        Long sourceAccount = options.getLong("source account number");
+        Long targetAccount = options.getLong("target account number");
+        BigDecimal amount = options.getBigDecimal("amount");
 
         OwnedAccount ownedAccount = app.transfer().transfer(user, sourceAccount, targetAccount, amount);
 
