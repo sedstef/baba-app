@@ -6,6 +6,7 @@ import at.fhj.softsec.baba.cli.CliContext;
 import at.fhj.softsec.baba.cli.Options;
 import at.fhj.softsec.baba.domain.model.OwnedAccount;
 import at.fhj.softsec.baba.domain.model.AuthenticatedUser;
+import at.fhj.softsec.baba.exception.ApplicationException;
 import at.fhj.softsec.baba.exception.InputParseException;
 
 import java.math.BigDecimal;
@@ -36,7 +37,7 @@ public class TransferCommand extends AuthenticatedCommand {
     }
 
     @Override
-    protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) throws InputParseException {
+    protected void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) throws ApplicationException {
         options.parse(args);
         Long sourceAccount = options.getLong("source account number");
         Long targetAccount = options.getLong("target account number");

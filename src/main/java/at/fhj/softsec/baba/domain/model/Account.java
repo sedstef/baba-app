@@ -1,5 +1,6 @@
 package at.fhj.softsec.baba.domain.model;
 
+import at.fhj.softsec.baba.exception.InsufficientFundsException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -56,21 +57,24 @@ public class Account implements OwnedAccount, ForeignAccount {
     }
 
     @Override
-    public void withdraw(BigDecimal amount) {
+    public void withdraw(BigDecimal amount) throws InsufficientFundsException {
         amount = normalize(amount);
         requirePositive(amount);
 
-//        if (getBalance().compareTo(amount) < 0) {
-//            throw new InsufficientFundsException("Insufficient funds");
-//        }
+        if (getBalance().compareTo(amount) < 0) {
+            throw new InsufficientFundsException("Insufficient funds");
+        }
         addMovement("Withdraw", amount.negate());
     }
 
     @Override
-    public void transferOut(AccountView target, BigDecimal amount) {
+    public void transferOut(AccountView target, BigDecimal amount) throws InsufficientFundsException {
         amount = normalize(amount);
         requirePositive(amount);
 
+        if (getBalance().compareTo(amount) < 0) {
+            throw new InsufficientFundsException("Insufficient funds");
+        }
         addMovement(format("Transfer to %s", target.getNumber()), amount.negate());
     }
 

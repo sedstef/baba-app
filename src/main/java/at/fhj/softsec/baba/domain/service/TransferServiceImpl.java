@@ -6,6 +6,7 @@ import at.fhj.softsec.baba.domain.model.OwnedAccount;
 import at.fhj.softsec.baba.domain.model.User;
 import at.fhj.softsec.baba.domain.repository.AccountRepository;
 import at.fhj.softsec.baba.domain.repository.UserRepository;
+import at.fhj.softsec.baba.exception.InsufficientFundsException;
 
 import java.math.BigDecimal;
 
@@ -30,7 +31,7 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Override
-    public OwnedAccount withdrawal(AuthenticatedUser authenticatedUser, Long accountNumber, BigDecimal amount) {
+    public OwnedAccount withdrawal(AuthenticatedUser authenticatedUser, Long accountNumber, BigDecimal amount) throws InsufficientFundsException {
         User user = userRepository.findById(authenticatedUser.getUserId())
                 .orElseThrow();
 
@@ -40,7 +41,7 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Override
-    public OwnedAccount transfer(AuthenticatedUser authenticatedUser, Long sourceNumber, Long targetNumber, BigDecimal amount) {
+    public OwnedAccount transfer(AuthenticatedUser authenticatedUser, Long sourceNumber, Long targetNumber, BigDecimal amount) throws InsufficientFundsException{
         User user = userRepository.findById(authenticatedUser.getUserId())
                 .orElseThrow();
 

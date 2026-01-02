@@ -15,5 +15,5 @@ public abstract class AuthenticatedCommand implements Command {
         execute(args, app, context, user);
     }
 
-    protected abstract void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) throws InputParseException;
+    protected abstract void execute(String[] args, Application app, CliContext context, AuthenticatedUser user) throws ApplicationException;
 }

@@ -2,6 +2,7 @@ package at.fhj.softsec.baba.cli;
 
 import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.ApplicationBootstrap;
+import at.fhj.softsec.baba.domain.model.OwnedAccount;
 import at.fhj.softsec.baba.domain.model.User;
 import at.fhj.softsec.baba.domain.model.AuthenticatedUser;
 import at.fhj.softsec.baba.exception.ApplicationException;
@@ -17,6 +18,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.crypto.SecretKey;
 import java.io.*;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.stream.Stream;
@@ -117,22 +119,29 @@ public class ZionTest {
                                 .withSetup(app -> createAccount(app, "alice", "secret"))
                                 .withExpectedPrompt("alice@BaBa> Account 1 balance € 20,00.\nalice@BaBa> "),
                         ArgumentsBuilder.of("withdrawal 1 20.00", "exit")
-                                .withSetup(app -> createAccount(app, "alice", "secret"))
-                                .withExpectedPrompt("alice@BaBa> Account 1 balance € -20,00.\nalice@BaBa> "),
+                                .withSetup(app -> {
+                                    AuthenticatedUser user = login(app, "alice", "secret");
+                                    OwnedAccount account = app.account().create(user);
+                                    app.transfer().deposit(user, account.getNumber(), BigDecimal.valueOf(50));
+                                })
+                                .withExpectedPrompt("alice@BaBa> Account 1 balance € 30,00.\nalice@BaBa> "),
                         ArgumentsBuilder.of("transfer 1 2 20.00", "exit")
                                 .withSetup(app -> {
-                                    createAccount(app, "alice", "secret");
+                                    AuthenticatedUser user = login(app, "alice", "secret");
+                                    OwnedAccount account = app.account().create(user);
+                                    app.transfer().deposit(user, account.getNumber(), BigDecimal.valueOf(50));
+
                                     User bob = app.auth().register("bob", "secret".toCharArray());
                                     app.account().create(bob);
                                 })
-                                .withExpectedPrompt("alice@BaBa> Account 1 balance € -20,00.\nalice@BaBa> ")
+                                .withExpectedPrompt("alice@BaBa> Account 1 balance € 30,00.\nalice@BaBa> ")
                 )
                 .map(ArgumentsBuilder::build);
     }
 
-    private static void createAccount(Application app, String userId, String password) throws AuthenticationException {
+    private static OwnedAccount createAccount(Application app, String userId, String password) throws AuthenticationException {
         AuthenticatedUser user = login(app, userId, password);
-        app.account().create(user);
+        return app.account().create(user);
     }
 
     private static AuthenticatedUser login(Application app, String userId, String password) throws AuthenticationException {
