@@ -9,6 +9,8 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static java.lang.String.format;
+
 /**
  * Domain aggregate root.
  * Not intended for direct use outside repositories/services.
@@ -50,7 +52,7 @@ public class Account implements OwnedAccount, ForeignAccount {
     public void deposit(BigDecimal amount) {
         amount = normalize(amount);
         requirePositive(amount);
-        addMovement(amount);
+        addMovement("Deposit", amount);
     }
 
     @Override
@@ -61,7 +63,7 @@ public class Account implements OwnedAccount, ForeignAccount {
 //        if (getBalance().compareTo(amount) < 0) {
 //            throw new InsufficientFundsException("Insufficient funds");
 //        }
-        addMovement(amount.negate());
+        addMovement("Withdraw", amount.negate());
     }
 
     @Override
@@ -69,14 +71,14 @@ public class Account implements OwnedAccount, ForeignAccount {
         amount = normalize(amount);
         requirePositive(amount);
 
-        addMovement(amount.negate());
+        addMovement(format("Transfer to %s", target.getNumber()), amount.negate());
     }
 
     @Override
     public void transferIn(AccountView source, BigDecimal amount) {
         amount = normalize(amount);
         requirePositive(amount);
-        addMovement(amount);
+        addMovement(format("Transfer from %s", source.getNumber()), amount);
     }
 
 
@@ -90,19 +92,12 @@ public class Account implements OwnedAccount, ForeignAccount {
         }
     }
 
-    private void addMovement(BigDecimal amount) {
-        movements.add(new Movement(LocalDateTime.now(), amount));
+    public Collection<Movement> getMovements() {
+        return Collections.unmodifiableCollection(movements);
     }
 
-    public record Movement(LocalDateTime timestamp, BigDecimal amount) implements Comparable<Movement> {
-        public Movement {
-            Objects.requireNonNull(timestamp, "Timestamp must be non null");
-            Objects.requireNonNull(amount, "Amount must be non null");
-        }
-
-        @Override
-        public int compareTo(Movement movement) {
-            return timestamp.compareTo(movement.timestamp());
-        }
+    private void addMovement(String description, BigDecimal amount) {
+        movements.add(new Movement(LocalDateTime.now(), description, amount));
     }
+
 }

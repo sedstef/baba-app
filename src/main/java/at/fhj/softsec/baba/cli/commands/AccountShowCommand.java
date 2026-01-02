@@ -3,10 +3,14 @@ package at.fhj.softsec.baba.cli.commands;
 import at.fhj.softsec.baba.Application;
 import at.fhj.softsec.baba.cli.AuthenticatedCommand;
 import at.fhj.softsec.baba.cli.CliContext;
+import at.fhj.softsec.baba.domain.model.Movement;
 import at.fhj.softsec.baba.domain.model.OwnedAccount;
 import at.fhj.softsec.baba.domain.model.AuthenticatedUser;
 
+import java.util.Comparator;
+
 import static java.lang.Long.parseLong;
+import static java.lang.String.format;
 
 public class AccountShowCommand extends AuthenticatedCommand {
     @Override
@@ -30,5 +34,8 @@ public class AccountShowCommand extends AuthenticatedCommand {
 
         OwnedAccount ownedAccount = app.account().retrieveAccount(user, accountNumber);
         context.out.printf("Account %d balance € %,.2f\n", ownedAccount.getNumber(), ownedAccount.getBalance());
+        ownedAccount.getMovements().stream()
+                .map(movement -> format("%s: %s € %,.2f", movement.timestamp(),movement.description(),movement.amount()))
+                .forEach(context.out::println);
     }
 }

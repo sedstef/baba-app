@@ -21,7 +21,7 @@ public class Main {
         try {
             new Main().run();
         } catch (StorageAccessException e) {
-            System.err.println("Internal storage error.");
+            System.err.println("Internal storage error:" + e.getMessage());
             System.exit(1);
         }
     }
