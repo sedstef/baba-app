@@ -7,17 +7,17 @@ baba-app is a layered console application. Each layer has a single responsibilit
 ```
 +----------------------------------------------------+
 |                     CLI Layer                      |
-|          (input parsing, commands, output)          |
+|          (input parsing, commands, output)         |
 +----------------------------------------------------+
 |                   Service Layer            A       |
 |  +------------------------------------+    u       |
-|  |            Domain Model             |    d       |
+|  |            Domain Model            |    d       |
 |  +------------------------------------+    i       |
-|  |           Business Logic            |    t       |
+|  |           Business Logic           |    t       |
 |  +------------------------------------+            |
 +----------------------------------------------------+
-|                  Persistence Layer                  |
-|        (encrypted read/write of data files)         |
+|                 Persistence Layer                  |
+|       (encrypted read/write of data files)         |
 +----------------------------------------------------+
 ```
 
