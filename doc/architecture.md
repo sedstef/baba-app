@@ -87,3 +87,4 @@ Every call into `AuthService`, `AccountService` and `TransferService` is interce
 
 - [domain-model.md](domain-model.md) — the account/user/movement model and how the type system prevents unauthorized account access.
 - [security.md](security.md) — cryptography, master key handling, and the threat analysis.
+- [architecture-internals.md](architecture-internals.md) — a deeper look at these patterns plus known weaknesses and test-coverage gaps.

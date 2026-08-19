@@ -19,6 +19,7 @@ The application follows a layered architecture (CLI → Service → Persistence)
 - [doc/architecture.md](doc/architecture.md) — layers, package structure, composition root, audit logging, error handling.
 - [doc/domain-model.md](doc/domain-model.md) — the account/user/movement model, and how `OwnedAccount` / `ForeignAccount` use the type system to prevent unauthorized account access.
 - [doc/security.md](doc/security.md) — master key derivation, encryption at rest, password hashing, and the threat analysis.
+- [doc/architecture-internals.md](doc/architecture-internals.md) — notable design patterns explained in depth, plus a list of known weaknesses and test-coverage gaps found during review.
 
 ## Tech stack
 
